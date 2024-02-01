@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>513107977432-2024knee33edbe35ksg9j626sitnm3rs.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.513107977432-2024knee33edbe35ksg9j626sitnm3rs</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>513107977432-g5eq07mah3rdo8tsr6lqg156k0fp7mej.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDCM79gMqh46QZze5tdJEl9ug-kaP5VWrI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>513107977432</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>Worests</string>
+	<key>PROJECT_ID</key>
+	<string>worests</string>
+	<key>STORAGE_BUCKET</key>
+	<string>worests.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:513107977432:ios:fd7ca067c9b8df7c</string>
+	<key>DATABASE_URL</key>
+	<string>https://worests.firebaseio.com</string>
+</dict>
+</plist>

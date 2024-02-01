@@ -1,0 +1,34 @@
+{
+  "cli": {
+    "version": ">= 0.52.0"
+  },
+  "build": {
+    "development": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "node": "16.18.1"
+    },
+    "preview": {
+      "distribution": "store", 
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+          "EAS_BUILD_DISABLE_NPM_CACHE": "1",
+          "EAS_LOCAL_BUILD_SKIP_CLEANUP": "1"
+
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "android": {
+         "buildType": "apk"
+      },
+      "node": "16.18.1"
+  },
+  "submit": {
+    }
+  }
+}

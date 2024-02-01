@@ -1,0 +1,126 @@
+{
+  "expo": {
+    "name": "TroFii",
+    "description": "Looking for best food offers, food picker app, great food service & amazing dining experience around you? Scroll through to find best foods to order!",
+    "slug": "TroFii",
+    "owner": "frezva2",
+    "currentFullName": "@frezva2/trofii",
+    "originalFullName": "@frezva2/trofii",
+    "privacy": "public",
+    "scheme": "trofii",
+    "userInterfaceStyle": "automatic",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "2.9.1",
+    "orientation": "portrait",
+    "facebookAppId": "307295626459407",
+    "facebookAutoInitEnabled": true,
+    "facebookDisplayName": "TroFii",
+    "facebookScheme": "fb307295626459407",
+    "assetBundlePatterns": [
+      "./assets/Trofii-Splash.gif",
+      "./assets/splash_2.png",
+      "./assets/signinbkg.png",
+      "./assets/header3.png",
+      "./assets/NoNotifications.png",
+      "./assets/Egift.png",
+      "./assets/faverest.png",
+      "./assets/NoPictureYet.png",
+      "./assets/fonts/Montserrat-Medium.ttf",
+      "./assets/fonts/Montserrat-Bold.ttf",
+      "./assets/fonts/Montserrat-SemiBold.ttf",
+      "./assets/fonts/Montserrat-Regular.ttf",
+      "./assets/fonts/BerkshireSwash-Regular.ttf",
+      "./assets/fonts/Poppins-Medium.ttf"
+    ],
+    "icon": "./assets/Icon_App_IOS2.png",
+    "splash": {
+      "image": "./assets/splash_2.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "bundleIdentifier": "Worests",
+      "icon": "./assets/Icon_App_IOS2.png",
+      "requireFullScreen": true,
+      "usesAppleSignIn": true,
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Your current location will be displayed on the map and used to search for restaurants or foods near you.",
+        "NSPhotoLibraryUsageDescription": "The photo you upload from your library will be set as your profile picture.",
+        "NSUserTrackingUsageDescription": "Your Name and Email address will be use to avoid froud and duplication account also it will help us to know who upload which picture in case of volition and froud. TroFii will NOT sell your data to any third party nor use in any AD.",
+        "NSCameraUsageDescription": "The photo you upload using your camera will be set as your profile picture."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyAqzRHlbJ7tIm7JzfCoLPajZxog_dBPMMI"
+      },
+      "googleServicesFile": "./GoogleService-Info.plist"
+    },
+    "android": {
+      "package": "com.www.worests",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 191,
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#C90611"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAqzRHlbJ7tIm7JzfCoLPajZxog_dBPMMI"
+        }
+      }
+    },
+    "web": {
+      "config": {
+        "firebase": {
+          "appId": "1:513107977432:ios:fd7ca067c9b8df7c",
+          "apiKey": "AIzaSyDAWNLR1joAOuN4WStnpJvr6446Qg0RhWg",
+          "clientId": "513107977432-01pktott0s803ktn40ll0fib72jtuod0.apps.googleusercontent.com",
+          "authDomain": "worests.firebaseapp.com",
+          "databaseURL": "https://worests.firebaseio.com",
+          "projectId": "worests",
+          "storageBucket": "worests.appspot.com",
+          "messagingSenderId": "513107977432",
+          "measurementId": "G-CJ1QHSX90M"
+        }
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9558c62c-711e-497f-a5ee-0fdd89da6510"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Your Name and Email address will be use to avoid froud and duplication account also it will help us to know who upload which picture in case of volition and froud. TroFii will NOT sell your data to any third party nor use in any AD."
+        }
+      ],
+      "expo-font"
+    ],
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9558c62c-711e-497f-a5ee-0fdd89da6510"
+    }
+  }
+}

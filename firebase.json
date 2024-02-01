@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "predeploy": [],
+    "source": "functions" 
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "react-native": {
+    "ml_vision_ocr_model": true
+  }
+}
