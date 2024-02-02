@@ -8,7 +8,7 @@
     "test": "jest --watchAll",
     "predeploy": "npx run build",
     "prebuild": "npx expo prebuild --no-install",
-    "build": "expo build:web",
+    "build": "npx expo build:web",
     "deploy": "gh-pages -d build"
   },
   "name": "trofii",
