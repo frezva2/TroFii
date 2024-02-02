@@ -1,6 +1,6 @@
 {
   "expo": {
-    "homepage": "https://github.com/frezva2/TroFii.git",
+    "homepage": "https://github.com/frezva2/TroFii",
     "name": "TroFii",
     "description": "Looking for best food offers, food picker app, great food service & amazing dining experience around you? Scroll through to find best foods to order!",
     "slug": "TroFii",
@@ -34,15 +34,6 @@
       "./assets/fonts/Poppins-Medium.ttf"
     ],
     "icon": "./assets/Icon_App_IOS2.png",
-    "scripts": {
-      "start": "expo start",
-      "predeploy": "npm run build",
-      "deploy": "gh-pages -d build",
-      "android": "expo run:android",
-      "ios": "expo run:ios",
-      "web": "expo start --web",
-      "build": "expo build:web"
-    },
     "splash": {
       "image": "./assets/splash_2.png",
       "resizeMode": "contain",
