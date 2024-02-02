@@ -30,7 +30,6 @@
 * [Usage](#usage)
 * [License](#license)
 * [Authors](#authors)
-* [Acknowledgements](#acknowledgements)
 
 ## About The Project
 
