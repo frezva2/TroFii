@@ -1,12 +1,14 @@
 {
   "scripts": {
-    "start": "expo start --dev-client",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "start": "npx expo start",
+    "android": "npx expo run:android",
+    "ios": "npx expo run:ios",
     "web": "CI=false && expo start --web",
-    "eject": "expo eject",
+    "eject": "npx expo eject",
     "test": "jest --watchAll",
-    "predeploy": "npm run build",
+    "predeploy": "npx run build",
+    "prebuild": "npx expo prebuild --no-install",
+    "build": "expo build:web",
     "deploy": "gh-pages -d build"
   },
   "name": "trofii",
