@@ -9,13 +9,11 @@ import {
   ScrollView,
   FlatList,
   ActivityIndicator,
-  SectionList,
   TouchableWithoutFeedback,
   TouchableHighlight,
   Keyboard,
   Alert,
   Share,
-  RefreshControl,
   Platform,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -29,7 +27,6 @@ import {
   Title,
   Paragraph,
   Searchbar,
-  FAB,
   Caption,
   DefaultTheme,
 } from "react-native-paper";
@@ -38,17 +35,12 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { LinearGradient } from "expo-linear-gradient";
 import Geocoder from "react-native-geocoding";
 import axios from "axios";
-import * as AppleAuthentication from "expo-apple-authentication";
 import openMap from "react-native-open-maps";
 import { CheckBox, AirbnbRating, Input, Rating } from "react-native-elements";
 import algoliasearch from "algoliasearch";
 import * as actions from "../actions";
 import { connect } from "react-redux";
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
-// import ScrollToTop from 'react-native-scroll-to-top';
-// import * as firebase from 'firebase';
-// import Modal from 'react-native-modal';
-import { useScrollToTop } from "@react-navigation/native";
 import Modal1 from "react-native-modal";
 import Feather from "react-native-vector-icons/Feather";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -62,14 +54,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal, ModalContent, SlideAnimation } from "react-native-modals";
 import * as Sharing from "expo-sharing";
-import { captureRef, captureScreen } from "react-native-view-shot";
-// import { usePreventScreenCapture } from 'expo-screen-capture';
-// import * as ScreenCapture from 'expo-screen-capture';
+import { captureScreen } from "react-native-view-shot";
 import { TouchableRipple } from "react-native-paper";
 import * as Google from "expo-auth-session/providers/google";
 import * as Facebook from "expo-auth-session/providers/facebook";
 import { ResponseType } from "expo-auth-session";
-
 import * as WebBrowser from "expo-web-browser";
 
 const firebase = require("firebase/app").default;
@@ -186,14 +175,6 @@ const FoodScreen = (props) => {
   const onChangeSearch = (query) => setSearchQuery(query);
   const [refreshing, setRefreshing] = React.useState(false);
   const [isTouchableRipple, setIsTouchableRipple] = React.useState(false);
-
-  // const wait = (timeout) => {
-  //   return new Promise(resolve => setTimeout(resolve, timeout));
-  // }
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   wait(10).then(() => {setRefreshing(false); console.log(nowIndex);});
-  // }, []);
   const doubleTapRef = useRef(null);
 
   const theme = useTheme();
@@ -201,18 +182,16 @@ const FoodScreen = (props) => {
   let _flatList1 = useRef(null);
   let _flatListItem = useRef(null);
 
-  // let _flatList = {};
   const [requestFacebookAuth, responseFacebookAuth, promptFacebookAuthAsync] =
     Facebook.useAuthRequest(
       {
-        clientId: "307295626459407",
-        redirectUri: `fb307295626459407://authorize`,
-        expoClientId: "307295626459407",
+        clientId: "",
+        redirectUri: ``,
+        expoClientId: "",
         responseType: ResponseType.Token,
         usePKCE: true,
       },
       {
-        // projectNameForProxy: "@frezva2/trofii",
         shouldAutoExchangeCode: true,
         useProxy: false,
       }
@@ -220,15 +199,11 @@ const FoodScreen = (props) => {
   const [requestGoogleAuth, responseGoogleAuth, promptAsyncGoogleAuth] =
     Google.useIdTokenAuthRequest(
       {
-        androidClientId:
-          "513107977432-g5eq07mah3rdo8tsr6lqg156k0fp7mej.apps.googleusercontent.com",
-        iosClientId:
-          "513107977432-4tnskjkkhkj4n4a23k5p7aolph8704kp.apps.googleusercontent.com",
-        expoClientId:
-          "513107977432-dont3igkq2o8lvhm2t8tcgjntig551bf.apps.googleusercontent.com",
+        androidClientId: "",
+        iosClientId: "",
+        expoClientId: "",
       },
       {
-        // projectNameForProxy: "@frezva2/trofii",
         shouldAutoExchangeCode: true,
         useProxy: false,
         selectAccount: true,
@@ -239,7 +214,6 @@ const FoodScreen = (props) => {
     foodNameArr: [],
     finalResults: [],
     commentsList: [],
-    // isaddToFavorite: false,
     activeSlide: 0,
     currentRating: 0,
     newTotalRate: 0,
@@ -282,26 +256,7 @@ const FoodScreen = (props) => {
     takenPicture: "",
     isSubmitImage: false,
     isLogin: false,
-    // searchQuery: ''
   });
-
-  // const onChangeSearch = (query) => {
-  //   setData({ ...data, searchQuery: query });
-  // }
-
-  // const mounted = async () => {
-  //   searchByFood();
-  //   const { currentUser } = firebase.auth();
-  //   if (currentUser !== null) {
-  //     await Analytics.setUserId(currentUser.uid);
-  //   }
-  // }
-
-  // const onSingleTapEvent = (event) => {
-  //   if (event.nativeEvent.state === State.ACTIVE) {
-  //     console.log("single tap 1");
-  //   }
-  // };
 
   const onDoubleTapEvent = (event, index) => {
     if (event.nativeEvent.state === State.ACTIVE) {
@@ -317,21 +272,7 @@ const FoodScreen = (props) => {
   };
 
   useEffect(() => {
-    // console.log(nowIndex);
     Geocoder.init("AIzaSyBv-uuNSNVNETBl0ol-jyI8zUs2yHr0QL4");
-    // mounted();
-    // console.log('mounted')
-    // const identify = new Identify();
-    // Amplitude.getInstance().identify(identify);
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (user !== null) {
-    //     identify.set("user", user.uid);
-    //     Amplitude.getInstance().logEvent(user.uid);
-    //     // Amplitude.getInstance().logEvent("BUTTON_CLICKED", {"Hover Time": "100ms"});
-    //   } else {
-    //     Amplitude.getInstance().logEvent('Unsigned User');
-    //   }
-    // })
     if (responseGoogleAuth === null && responseFacebookAuth === null) {
       searchByFood();
     }
@@ -341,40 +282,8 @@ const FoodScreen = (props) => {
     if (responseFacebookAuth !== null) {
       props.facebookLogin(responseFacebookAuth);
     }
-    return () => {
-      // console.log('unmounting...');
-    };
+    return () => {};
   }, [responseGoogleAuth, responseFacebookAuth]);
-
-  //  const getRestLogo = (idx, restaurantUid) => {
-  //   const client = algoliasearch('K9M4MC44R0', 'dfc4ea1c057d492e96b0967f050519c4', {
-  //     // timeouts: {
-  //     //   connect: 1,
-  //     //   read: 1, // The value of the former `timeout` parameter
-  //     //   write: 30
-  //     // }
-  //   });
-  //   let newIndexList = data.tempIndex;
-  //   // console.log(newIndexList.indexOf(idx))
-  //   if (data.tempIndex.indexOf(idx) === -1) {
-  //     newIndexList.push(idx);
-  //     setData({ ...data, tempIndex: newIndexList });
-  //     let tempRestsImageList = data.restsImageList;
-  //     client.initIndex('restsList').search(restaurantUid, {
-  //         attributesToRetrieve: userAttrToRetr,
-  //         hitsPerPage: 1,
-  //         restrictSearchableAttributes: ['restaurantUid', 'objectID']
-  //       }).then(responses => {
-  //         const str = JSON.stringify(responses.hits);
-  //         const object = JSON.parse(str);
-  //         tempRestsImageList.push(object[0].image);
-
-  //   // console.log(restaurantUid, object[0].restaurantUid);
-  //         setData({ ...data, restsImageList: tempRestsImageList });
-  //         // console.log(idx, object[0].restName)
-  //       });
-  //   }
-  // }
 
   const shuffle = (array) => {
     var currentIndex = array.length,
@@ -391,7 +300,6 @@ const FoodScreen = (props) => {
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
-      // this.setState({ restsImage: this.state.restsImage.concat(array[randomIndex].image) });
     }
     return array;
   };
@@ -443,9 +351,6 @@ const FoodScreen = (props) => {
   };
   const orderOnline = (restOrderWeb) => {
     const { currentUser } = firebase.auth();
-    // if (currentUser === null || currentUser === undefined) {
-    //     this.setState({ isUserUnsignedVisible: true, isCommentsVisible: false });
-    //   }
     if (
       currentUser !== null &&
       currentUser !== undefined &&
@@ -460,12 +365,9 @@ const FoodScreen = (props) => {
         { cancelable: false }
       );
     }
-    // if (currentUser !== null && currentUser !== undefined && restOrderWeb !== undefined && restOrderWeb !== '') {
     Linking.openURL(`http://${restOrderWeb}`);
-    // }
   };
   const searchByFood = () => {
-    // _flatList?.scrollToOffset({offset: 0, animated: true});
     setTimeout(() => {
       setData({
         ...data,
@@ -474,8 +376,8 @@ const FoodScreen = (props) => {
     }, 50);
     Keyboard.dismiss();
     const client = algoliasearch(
-      "K9M4MC44R0",
-      "dfc4ea1c057d492e96b0967f050519c4",
+      "",
+      "",
       {
         timeouts: {
           connect: 1,
@@ -485,7 +387,6 @@ const FoodScreen = (props) => {
       }
     );
     let index = client.initIndex(data.sortBy);
-    // const { currentUser } = firebase.auth();
     Geocoder.from(data.myLocation).then((json) => {
       var newLocation = json.results[0].geometry.location;
       const latString = newLocation.lat.toString();
@@ -501,19 +402,15 @@ const FoodScreen = (props) => {
           typoTolerance: "strict",
           minWordSizefor1Typo: 3,
           minWordSizefor2Typos: 6,
-          // aroundLatLng: arndLatLng,
           restrictSearchableAttributes: [
             "foodInfo.food_name",
             "foodInfo.tags",
             "restName",
           ],
-          // aroundRadius: Math.round(data.aroundRadius),
-          // getRankingInfo: true,
           facetFilters: [
             `isRestActive:${true}`,
             `publish:${true}`,
             `isImageUploaded:${true}`,
-            // `isNonRestaurantUpload:${true}`,
           ],
         })
         .then((responses) => {
@@ -522,7 +419,6 @@ const FoodScreen = (props) => {
           index = "";
           if (object.length !== 0) {
             shuffle(object);
-            // object.splice(150);
             firebase.auth().onAuthStateChanged((user) => {
               if (user !== null) {
                 const userRef = firebase.database().ref(`/users/${user.uid}`);
@@ -642,11 +538,6 @@ const FoodScreen = (props) => {
     if (userToken !== null) {
       Sharing.isAvailableAsync().then(async (isAvailableAsync) => {
         if (isAvailableAsync) {
-          // await captureRef(_flatListItem, {
-          //     result: 'tmpfile',
-          //     quality: 0.25,
-          //     format: 'jpg',
-          //   })
           captureScreen({
             result: "tmpfile",
             quality: 0.25,
@@ -654,7 +545,6 @@ const FoodScreen = (props) => {
           }).then(async (uri) => {
             let uploadUrl = await uploadImageShareAsync(uri);
             const result = await Share.share({
-              //   url: uri,
               message: `I recommend you ${food_name} from ${restName}. Find more about this item with TroFii App: \nhttps://www.TroFii.Net \n\n${restWebsite} \n\n${uploadUrl}`,
             });
           });
@@ -671,7 +561,6 @@ const FoodScreen = (props) => {
     });
   };
   const _renderItem = ({ item, index }) => {
-    // getRestLogo(index, item.restaurantUid);
     return (
       <ScrollView
         style={{
@@ -680,16 +569,14 @@ const FoodScreen = (props) => {
           width,
           height,
           marginLeft: -10,
-          transform: [{ rotate: index % 2 === 1 ? "3deg" : "-3deg" }]
-        }}
-      >
+          transform: [{ rotate: index % 2 === 1 ? "3deg" : "-3deg" }],
+        }}>
         <TapGestureHandler
           ref={doubleTapRef}
           onHandlerStateChange={(event) => {
-            onDoubleTapEvent(event, index-3);
+            onDoubleTapEvent(event, index - 3);
           }}
-          numberOfTaps={2}
-        >
+          numberOfTaps={2}>
           <Card
             elevation={10}
             style={{
@@ -699,15 +586,13 @@ const FoodScreen = (props) => {
               borderRadius: 15,
               marginTop: 5,
               zIndex: -1,
-            }}
-          >
+            }}>
             <TouchableRipple
               style={{ borderRadius: 15 }}
               onPress={() => {}}
               rippleColor="white"
               borderless={true}
-              disabled={isTouchableRipple}
-            >
+              disabled={isTouchableRipple}>
               <View>
                 <View
                   ref={(flatList) => {
@@ -719,8 +604,7 @@ const FoodScreen = (props) => {
                     justifyContent: "center",
                     alignItems: "center",
                     marginTop: 0,
-                  }}
-                >
+                  }}>
                   <Card.Cover
                     style={{
                       flex: 1,
@@ -744,24 +628,20 @@ const FoodScreen = (props) => {
                     flexDirection: "row",
                     justifyContent: "flex-start",
                     marginLeft: -10,
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       flexDirection: "row",
                       margin: 15,
                       width: width * 0.57,
                       justifyContent: "flex-start",
-                    }}
-                  >
-                    {/* <Avatar.Image size={50} source={{ uri: data.restsImageList[index] }} /> */}
+                    }}>
                     <Card.Content style={{ marginTop: -5, marginLeft: -5 }}>
                       <Title
                         style={{
                           fontSize: 14,
                           fontFamily: "MontserratSemiBold",
-                        }}
-                      >
+                        }}>
                         {item.foodInfo.food_name}
                       </Title>
                     </Card.Content>
@@ -771,16 +651,14 @@ const FoodScreen = (props) => {
                       marginTop: 15,
                       alignItems: "flex-start",
                       marginLeft: 5,
-                    }}
-                  >
+                    }}>
                     <Caption
                       style={{
                         fontFamily: "MontserratBold",
                         fontSize: 11,
                         marginTop: 5,
                         marginLeft: -25,
-                      }}
-                    >
+                      }}>
                       "{item.foodInfo.foodType}"
                     </Caption>
                     <View
@@ -788,8 +666,7 @@ const FoodScreen = (props) => {
                         flexDirection: "row",
                         justifyContent: "flex-start",
                         marginLeft: -width * 0.12,
-                      }}
-                    >
+                      }}>
                       {item.totalView === 0 ? (
                         <View />
                       ) : (
@@ -800,8 +677,7 @@ const FoodScreen = (props) => {
                             marginLeft: 1,
                             flexDirection: "row",
                             marginTop: -5,
-                          }}
-                        >
+                          }}>
                           <View>
                             <Button
                               labelStyle={{
@@ -823,8 +699,7 @@ const FoodScreen = (props) => {
                                 color: colors.text,
                                 marginLeft: -28,
                                 marginTop: -2,
-                              }}
-                            >
+                              }}>
                               {item.totalView === 0 ? "None" : item.totalView}
                             </Text>
                           </View>
@@ -840,8 +715,7 @@ const FoodScreen = (props) => {
                             marginLeft: -25,
                             flexDirection: "row",
                             marginTop: -5,
-                          }}
-                        >
+                          }}>
                           <View>
                             <Button
                               labelStyle={{
@@ -863,8 +737,7 @@ const FoodScreen = (props) => {
                                 color: "#FFC607",
                                 marginLeft: -22,
                                 marginTop: -2,
-                              }}
-                            >
+                              }}>
                               {item.foodInfo.Rate.qualityRate === 0
                                 ? "None"
                                 : item.foodInfo.Rate.qualityRate}
@@ -882,8 +755,7 @@ const FoodScreen = (props) => {
                     marginTop: 5,
                     marginRight: 10,
                     marginBottom: 10,
-                  }}
-                >
+                  }}>
                   {item?.foodInfo?.tags?.trim().length !== 0 ? (
                     tagSeperator(item.foodInfo.tags)
                   ) : (
@@ -901,14 +773,9 @@ const FoodScreen = (props) => {
     if (tags !== undefined) {
       const tagsArr = tags.split(",");
       return (
-        // setTimeout(() => {
         <Tags
           initialTags={tagsArr}
           readonly={true}
-          // onChangeTags={tags => console.log(tags)}
-          // onTagPress={(index, tagLabel, event, deleted) =>
-          //   console.log(index, tagLabel, event, deleted ? "deleted" : "not deleted")
-          // }
           containerStyle={{ justifyContent: "flex-start" }}
           inputContainerStyle={{ height: 0, width: 0 }}
           renderTag={({ tag, index }) =>
@@ -925,8 +792,7 @@ const FoodScreen = (props) => {
                   height: tag.length > width / 11 ? 50 : 30,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <Paragraph
                   style={{
                     fontFamily: "MontserratSemiBold",
@@ -934,8 +800,7 @@ const FoodScreen = (props) => {
                     color: "#C90611",
                     marginLeft: 10,
                     marginRight: 10,
-                  }}
-                >
+                  }}>
                   {tag}
                 </Paragraph>
               </View>
@@ -945,13 +810,9 @@ const FoodScreen = (props) => {
           }
         />
       );
-      // }, 100);
     }
   };
 
-  // _shouldItemUpdate = (prev, next) => {
-  //     return prev.item !== next.item;
-  // }
   const renderHeader = () => {
     return (
       <View style={{ width }}>
@@ -963,8 +824,11 @@ const FoodScreen = (props) => {
               size={20}
             />
             <Caption
-              style={{ fontFamily: "Montserrat", fontSize: 14, marginLeft: 10 }}
-            >
+              style={{
+                fontFamily: "Montserrat",
+                fontSize: 14,
+                marginLeft: 10,
+              }}>
               {data.myLocation}
             </Caption>
           </View>
@@ -976,8 +840,7 @@ const FoodScreen = (props) => {
                 fontFamily: "MontserratBold",
                 fontSize: 24,
                 color: colors.text,
-              }}
-            >
+              }}>
               Search for{" "}
             </Text>
           </View>
@@ -987,8 +850,7 @@ const FoodScreen = (props) => {
                 fontFamily: "MontserratBold",
                 fontSize: 24,
                 color: "#EE5B64",
-              }}
-            >
+              }}>
               Food{" "}
             </Text>
           </View>
@@ -998,8 +860,7 @@ const FoodScreen = (props) => {
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
-          }}
-        >
+          }}>
           <View
             style={{
               marginLeft: 25,
@@ -1007,8 +868,7 @@ const FoodScreen = (props) => {
               marginTop: 15,
               marginBottom: 15,
               width: width * 0.72,
-            }}
-          >
+            }}>
             <Searchbar
               placeholder="Search anything..."
               onIconPress={() => {
@@ -1016,7 +876,6 @@ const FoodScreen = (props) => {
               }}
               onChangeText={onChangeSearch}
               value={searchQuery}
-              // defaultValue={data.searchQuery}
               onEndEditing={() => {
                 handleSearch(searchQuery);
               }}
@@ -1031,7 +890,6 @@ const FoodScreen = (props) => {
           <Image
             style={{ width: 70, height: 70, marginTop: 5 }}
             source={require("../assets/icons/SQ.png")}
-            // fadeDuration={100}
           />
         </View>
         <View style={{ flexDirection: "row", marginLeft: 25 }}>
@@ -1047,8 +905,7 @@ const FoodScreen = (props) => {
                 color: colors.text,
                 marginTop: -3,
                 marginLeft: 10,
-              }}
-            >
+              }}>
               Sort by:{" "}
             </Text>
           </View>
@@ -1060,8 +917,7 @@ const FoodScreen = (props) => {
                 color: "#EE5B64",
                 marginTop: -5,
                 marginLeft: 1,
-              }}
-            >
+              }}>
               Best Food
             </Text>
           </View>
@@ -1072,8 +928,7 @@ const FoodScreen = (props) => {
               fontFamily: "MontserratSemiBold",
               fontSize: 16,
               color: colors.text,
-            }}
-          >
+            }}>
             Nearby Food
           </Text>
         </View>
@@ -1089,16 +944,10 @@ const FoodScreen = (props) => {
     );
   };
 
-  // _getItemLayout = (data, index) => {
-  //   console.log(heightItem, index);
-  //     return { length: heightItem, offset:(heightItem + 25) * index, index }
-  // }
   const handleSearch = () => {
-    // console.log(query, data.searchQuery)
     setData({
       ...data,
       numOfItems: 0,
-      // searchQuery: query,
       finalResults: [],
       restUidIndex: 0,
     });
@@ -1112,56 +961,15 @@ const FoodScreen = (props) => {
       restUidIndex: 0,
       refreshing: true,
     });
-    // , () => {
     searchByFood();
-    // }
-    // );
   };
 
   const handleLoadMore = () => {
-    // console.log(data.restUidIndex, data.restsUidArr);
     setData({
       ...data,
       loading: true,
     });
-    // const client = algoliasearch('K9M4MC44R0', 'dfc4ea1c057d492e96b0967f050519c4', {
-    //   // timeouts: {
-    //   //   connect: 1,
-    //   //   read: 1, // The value of the former `timeout` parameter
-    //   //   write: 30
-    //   // }
-    // });
-    // const index = client.initIndex('foodsList');
-    //     index.search(data.searchQuery, {
-    //       attributesToRetrieve: attrToRetr,
-    //       hitsPerPage: 100,
-    //       typoTolerance: 'strict',
-    //       filters: `restaurantUid:${data.restsUidArr[data.restUidIndex]}`,
-    //       facetFilters: [`isRestActive:${true}`, `publish:${true}`, `isImageUploaded:${true}`]
-    //     }).then(responses => {
-    //         const str = JSON.stringify(responses.hits);
-    //         let object = JSON.parse(str);
-    //         shuffle(object);
-    //         object.splice(10);
-    //         setData({
-    //           ...data,
-    //             finalResults: [...data.finalResults, ...object],
-    //             refreshing: false,
-    //             loading: false,
-    //             numOfItems: data.numOfItems + 10,
-    //             restUidIndex: data.restUidIndex + 1
-    //           });
-    //       });
   };
-
-  //  const _shouldItemUpdate = (props, nextProps) => {
-  //     if (this.isEquivalent(props, nextProps)) {
-  //       return false;
-  //     }
-  //     else {
-  //       return true;
-  //     }
-  //   }
 
   const renderEmpty = () => {
     return (
@@ -1171,8 +979,7 @@ const FoodScreen = (props) => {
           alignItems: "center",
           marginLeft: 20,
           marginTop: 5,
-        }}
-      >
+        }}>
         <ScrollView style={{ marginBottom: 0, marginTop: 0, width, height }}>
           <Card
             elevation={10}
@@ -1185,8 +992,7 @@ const FoodScreen = (props) => {
               marginTop: 5,
               zIndex: -1,
               alignItems: "center",
-            }}
-          >
+            }}>
             <View
               style={{
                 flex: 1,
@@ -1194,8 +1000,7 @@ const FoodScreen = (props) => {
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
                 marginTop: 0,
-              }}
-            >
+              }}>
               <ShimmerPlaceHolder
                 style={{
                   flex: 1,
@@ -1213,17 +1018,14 @@ const FoodScreen = (props) => {
                 flexDirection: "row",
                 justifyContent: "flex-start",
                 marginLeft: -10,
-              }}
-            >
+              }}>
               <View
                 style={{
                   flexDirection: "row",
                   margin: 15,
                   width: width * 0.57,
                   justifyContent: "flex-start",
-                }}
-              >
-                {/* <Avatar.Image size={50} source={{ uri: data.restsImageList[index] }} /> */}
+                }}>
                 <Card.Content style={{ marginTop: -5, marginLeft: -5 }}>
                   <ShimmerPlaceHolder
                     style={{ width: width * 0.4, height: 15, borderRadius: 5 }}
@@ -1235,8 +1037,7 @@ const FoodScreen = (props) => {
                   marginTop: 15,
                   alignItems: "flex-start",
                   marginLeft: 5,
-                }}
-              >
+                }}>
                 <ShimmerPlaceHolder
                   style={{ width: width * 0.15, height: 15, borderRadius: 5 }}
                 />
@@ -1245,8 +1046,7 @@ const FoodScreen = (props) => {
                     flexDirection: "row",
                     justifyContent: "flex-start",
                     marginLeft: -width * 0.2,
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       justifyContent: "flex-start",
@@ -1254,8 +1054,7 @@ const FoodScreen = (props) => {
                       marginLeft: 5,
                       flexDirection: "row",
                       marginTop: 15,
-                    }}
-                  >
+                    }}>
                     <View>
                       <ShimmerPlaceHolder
                         style={{ width: 20, height: 20, borderRadius: 10 }}
@@ -1301,8 +1100,7 @@ const FoodScreen = (props) => {
                 marginTop: 25,
                 marginRight: 10,
                 marginBottom: 10,
-              }}
-            >
+              }}>
               <View
                 style={{
                   flexDirection: "row",
@@ -1314,8 +1112,7 @@ const FoodScreen = (props) => {
                   height: 3,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <ShimmerPlaceHolder
                   style={{ width: width * 0.4, height: 30, borderRadius: 5 }}
                 />
@@ -1339,8 +1136,7 @@ const FoodScreen = (props) => {
                   width: width * 0.5,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <ShimmerPlaceHolder
                   style={{ width: width * 0.55, height: 30, borderRadius: 5 }}
                 />
@@ -1356,8 +1152,7 @@ const FoodScreen = (props) => {
                   height: 3,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 <ShimmerPlaceHolder
                   style={{ width: width * 0.15, height: 30, borderRadius: 5 }}
                 />
@@ -1379,21 +1174,10 @@ const FoodScreen = (props) => {
 
   const login = (type) => {
     if (type === "facebook") {
-      // props.facebookLogin(
-      //   requestFacebookAuth,
-      //   responseFacebookAuth,
-      //   promptFacebookAuthAsync
-      // );
       promptFacebookAuthAsync();
-      // console.log(requestFacebookAuth)
-      // console.log(responseFacebookAuth)
       setData({ ...data, isLogin: false });
     } else if (type === "google") {
-      // console.log(request)
-      // console.log(response)
-      // console.log(promptAsync)
       promptAsyncGoogleAuth();
-      // props.googleLogin(request, response, promptAsync);
       setData({ ...data, isLogin: false });
     }
     if (type === "apple") {
@@ -1493,7 +1277,6 @@ const FoodScreen = (props) => {
                 newTotalRate: snapshot.val().foodInfo.Rate.totalRate + 1,
               });
             }, 100);
-            // console.log(parseFloat((((snapshot.val().foodInfo.Rate.qualityRate * snapshot.val().foodInfo.Rate.totalRate) + Rate) / (snapshot.val().foodInfo.Rate.totalRate + 1)).toFixed(2)))
           }
         }
       });
@@ -1518,14 +1301,6 @@ const FoodScreen = (props) => {
       });
     }
   };
-  // const checkAddPic = async () => {
-  //   const userToken = await AsyncStorage.getItem('userToken');
-  //   if (userToken !== null) {
-  //     // props.navigation.navigate('FindRestaurant')
-  //   } else {
-  //     setData({ ...data, isLogin: true });
-  //   }
-  // }
   const checkSortBy = () => {
     if (data.sortBy === "sortByTotalView") {
       return "Most Popular";
@@ -1540,9 +1315,6 @@ const FoodScreen = (props) => {
   const isLoginYet = () => {
     const { currentUser } = firebase.auth();
     if (currentUser !== null) {
-      // const userToken = await AsyncStorage.getItem("userToken");
-      // console.log(userToken)
-      // if (userToken !== null) {
       props.navigation.openDrawer();
     } else {
       setData({ ...data, isLogin: true });
@@ -1569,15 +1341,6 @@ const FoodScreen = (props) => {
   };
   const sendToAllNotification = () => {
     const { currentUser } = firebase.auth();
-    // firebase.database().ref(`/users/${data.currentItem.restaurantUid}`).once("value").then((snapshot) => {
-    //   snapshot.val().followersList.forEach((uid) => {
-    //     if (uid !== 0) {
-    //         firebase.database().ref(`/users/${uid}`).once("value").then((snap) => {
-    //           sendPushNotification(snap.val().expoToken, uid, 'New Rating ...', `${data.finalResults[data.currentIndex]?.restName} got ${data.newRating}/5 rating for ${data.currentItem.foodInfo.food_name}. `, 'NewRating', data.currentItem.foodInfo.image, currentUser.uid, data.currentItem.objectID)
-    //         })
-    //       }
-    //     })
-    // });
 
     firebase
       .database()
@@ -1971,12 +1734,6 @@ const FoodScreen = (props) => {
               }
             });
         }
-        // default: {
-        //     Alert.alert('Rate Error Submission', 'We are so sorry but everyday you can Rate only one item in each food category.', [{ text: 'OK',
-        //     onPress: () => {},
-        //     style: 'cancel' }], { cancelable: false });
-        // }
-        //   break;
       }
     }
   };
@@ -2108,7 +1865,6 @@ const FoodScreen = (props) => {
     try {
       if (!pickerResult.cancelled) {
         let uploadUrl = await uploadImageAsync(pickerResult.uri);
-        // if (data.isSubmitImage === true) {
         const newItem = data.finalResults;
         const imageUrl = update(data.finalResults[data.activeSlide], {
           foodInfo: { image: { $set: uploadUrl } },
@@ -2123,13 +1879,6 @@ const FoodScreen = (props) => {
             userSubmitImage: false,
           });
         }, 101);
-
-        // } else {
-        //   setData({
-        //     ...data,
-        //     takenPicture: uploadUrl
-        //   })
-        // }
       }
     } catch (e) {
       alert("Upload failed, sorry :(");
@@ -2205,12 +1954,11 @@ const FoodScreen = (props) => {
     // return await snapshot.downloadURL;
   }
   const calcNow = (CreateAt) => {
-  if (CreateAt !== undefined) {
+    if (CreateAt !== undefined) {
       const minutes = Number(CreateAt.substring(10, 12));
       const hours = Number(CreateAt.substring(8, 10));
       const day = Number(CreateAt.substring(6, 8));
       const year = Number(CreateAt.substring(0, 4));
-      // console.log(CreateAt)
       if (CreateAt.substring(4, 6) === "01") {
         return `Jan ${day}, ${year}  ${hours > 12 ? hours - 12 : hours}:${
           minutes < 10 ? `0${minutes}` : minutes
@@ -2274,7 +2022,6 @@ const FoodScreen = (props) => {
     }
   };
   const _renderComments = ({ item, index }) => {
-    // console.log(item)
     return (
       <Card
         style={{
@@ -2288,16 +2035,14 @@ const FoodScreen = (props) => {
           marginLeft: 10,
           marginBottom: 0,
           marginRight: 10,
-        }}
-      >
+        }}>
         <View
           style={{
             alignItems: "center",
             borderRadius: 10,
             justifyContent: "center",
             marginTop: 10,
-          }}
-        >
+          }}>
           <View
             style={{
               flex: 1,
@@ -2307,8 +2052,7 @@ const FoodScreen = (props) => {
               marginLeft: 5,
               flexDirection: "row",
               borderRadius: 5,
-            }}
-          >
+            }}>
             <View style={{ height: 60, width: 60 }}>
               <View
                 style={{
@@ -2331,16 +2075,11 @@ const FoodScreen = (props) => {
                   justifyContent: "flex-start",
                   marginTop: 10,
                   zIndex: 1,
-                }}
-              >
+                }}>
                 <Avatar.Image
                   size={50}
                   theme={styles.theme}
                   source={{ uri: item.userImage }}
-                  // rounded
-                  // style={{ width: 50, height: 50, borderRadius: 25 }}
-                  // activeOpacity={1.0}
-                  // onPress={() => { console.log(this.getRestLogo(item.restaurantUid)) }}
                 />
               </View>
             </View>
@@ -2352,22 +2091,19 @@ const FoodScreen = (props) => {
                   justifyContent: "flex-start",
                   marginLeft: 0,
                   marginTop: 5,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 0,
-                  }}
-                >
+                  }}>
                   <Text
                     style={{
                       fontFamily: "MontserratBold",
                       fontSize: 15,
                       width: width * 0.65,
-                    }}
-                  >
+                    }}>
                     {item.firstname} {item.lastname}
                   </Text>
                 </View>
@@ -2379,8 +2115,7 @@ const FoodScreen = (props) => {
                     backgroundColor: "rgba(0, 0, 0, 0.1)",
                     borderRadius: 5,
                     marginTop: 5,
-                  }}
-                >
+                  }}>
                   <Text style={styles.commentStyle}>{item.comment}</Text>
                   {item.isMatched ? (
                     <View
@@ -2389,8 +2124,7 @@ const FoodScreen = (props) => {
                         marginTop: -5,
                         marginLeft: 7,
                         marginBottom: 5,
-                      }}
-                    >
+                      }}>
                       <AirbnbRating
                         count={5}
                         reviews={[
@@ -2429,8 +2163,7 @@ const FoodScreen = (props) => {
                         marginTop: -5,
                         marginLeft: 7,
                         marginBottom: 5,
-                      }}
-                    >
+                      }}>
                       <AirbnbRating
                         count={5}
                         reviews={[
@@ -2478,14 +2211,12 @@ const FoodScreen = (props) => {
               marginBottom: 10,
               marginLeft: 30,
               flexDirection: "row",
-            }}
-          ></View>
+            }}></View>
         </View>
       </Card>
     );
   };
   const removeFromFavorites = (objectID) => {
-    // console.log(objectID)
     const { currentUser } = firebase.auth();
     if (currentUser !== null && currentUser !== undefined) {
       firebase
@@ -2553,39 +2284,48 @@ const FoodScreen = (props) => {
     const time = `${month}/${day}/${year} ${hrs}:${min}`;
     const sec = new Date().getSeconds();
     const milsec = new Date().getMilliseconds();
-    let dateID = ((year * 10000000000000) + (month * 100000000000) + 
-    (day * 1000000000) + (hrs * 10000000) + (min * 100000) + (sec * 1000) + milsec);
+    let dateID =
+      year * 10000000000000 +
+      month * 100000000000 +
+      day * 1000000000 +
+      hrs * 10000000 +
+      min * 100000 +
+      sec * 1000 +
+      milsec;
 
     const { currentUser } = firebase.auth();
-      if (currentUser !== null) {
-			Alert.alert(
-				"Report Alert:",
+    if (currentUser !== null) {
+      Alert.alert(
+        "Report Alert:",
         "Are you sure you want to report this item?",
-        [{ text: "YES", onPress: () => {
-          firebase
-          .database()
-          .ref(`/userReportData/`)
-          .push({ 
-            dateID,
-            emailReporter: currentUser.email,
-            restName: item.restName,
-            restaurantUid: item.restaurantUid,
-            submitTime: time,
-            foodUid: item.objectID,
-            uidRequested: currentUser.uid,
-          })
-        }, style: "cancel" },
-        {
-          text: "NO",
-          onPress: () => {},
-          style: "cancel"
-        }],
-				{ cancelable: true }
-			  );
-      } else {
-        setData({ ...data, isLogin: true });
-      }
-  }
+        [
+          {
+            text: "YES",
+            onPress: () => {
+              firebase.database().ref(`/userReportData/`).push({
+                dateID,
+                emailReporter: currentUser.email,
+                restName: item.restName,
+                restaurantUid: item.restaurantUid,
+                submitTime: time,
+                foodUid: item.objectID,
+                uidRequested: currentUser.uid,
+              });
+            },
+            style: "cancel",
+          },
+          {
+            text: "NO",
+            onPress: () => {},
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      setData({ ...data, isLogin: true });
+    }
+  };
   const swipeRightFunc = () => {
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1;
@@ -2604,15 +2344,11 @@ const FoodScreen = (props) => {
       sec * 1000 +
       milsec;
 
-    // console.log('Swipe Right', index, data.currentIndex);
-    // let idx = index+1;
-
     setTimeout(() => {
       props.navigation.navigate("MyFavoriteFood", { cameFromDate: dateID });
     }, 10);
   };
   const callNow = async (phoneNum) => {
-    // CALL({ number: phoneNum  });
     Linking.openURL(`tel:${phoneNum}`);
   };
   const getUserPostId = (uid) => {
@@ -2647,7 +2383,6 @@ const FoodScreen = (props) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <StatusBar barStyle={theme.dark ? "light-content" : "dark-content"} />
-        {/* <View style={{ flex: 1, marginTop: -22 }}> */}
         <View style={{ width, height: 56, justifyContent: "center" }}>
           <View
             style={{
@@ -2655,14 +2390,12 @@ const FoodScreen = (props) => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <TouchableOpacity
               style={{ flex: 1, marginLeft: 0 }}
               onPress={() => {
                 isLoginYet();
-              }}
-            >
+              }}>
               <Image
                 style={{
                   flex: 1,
@@ -2682,8 +2415,7 @@ const FoodScreen = (props) => {
                 textAlign: "center",
                 fontFamily: "BerkshireSwash",
                 marginLeft: height / width > 1.5 ? width * 0.25 : width * 0.375,
-              }}
-            >
+              }}>
               TroFii
             </Text>
             <View
@@ -2691,8 +2423,7 @@ const FoodScreen = (props) => {
                 flex: 1,
                 marginLeft: height / width > 1.5 ? width * 0.25 : width * 0.375,
                 marginRight: 10,
-              }}
-            >
+              }}>
               <Image
                 style={{
                   resizeMode: "contain",
@@ -2723,30 +2454,13 @@ const FoodScreen = (props) => {
             }}
           />
         </View>
-        {/* <View style={{ width, marginTop: 15 }}>
-              <View style={{ flexDirection: 'row', marginLeft: 25, marginBottom: 15 }}>
-                <FontAwesome 
-                    name="map-marker"
-                    color={'rgba(0, 0, 0, 0.25)'}
-                    size={20}
-                />
-                <Text style={{ fontFamily: 'Montserrat', fontSize: 14, color: 'rgba(0, 0, 0, 0.25)', marginLeft: 10 }}>{data.myLocation}</Text>
-              </View>
-            </View> */}
         <ScrollView
-          // refreshControl={
-          //   <RefreshControl
-          //     refreshing={refreshing}
-          //     onRefresh={onRefresh}
-          //   />
-          // }
           style={{
             backgroundColor: "white",
             flex: 1,
             marginBottom: 35,
             marginTop: 10,
-          }}
-        >
+          }}>
           {data.finalResults.length !== 0 ? (
             <Carousel
               ref={(flatList) => {
@@ -2754,64 +2468,14 @@ const FoodScreen = (props) => {
               }}
               data={data.finalResults}
               renderItem={_renderItem.bind(this)}
-              // onScrollIndexChanged={(slideIndex) =>{ console.log(slideIndex) }}
-              // onSnapToItem={(index) =>{ console.log('onSnapToItem: ', index) }}
-              // onScrollIndexChanged={(index) => {
-              //   // setNowIndex(index);
-              //   if (index !== data.currentIndex) {
-              //     if (index > data.currentIndex && data.currentIndex !== 0) {
-              //       // swipeLeftFunc();
-              //       // setTimeout(() => {
-              //       setData({
-              //         ...data,
-              //         currentIndex: index,
-              //         isSeeItem: false,
-              //       });
-              //       // }, 10);
-              //       // totalViewFunc(index);
-              //     }
-              //     if (index < data.currentIndex && data.currentIndex !== 0) {
-              //       // props.navigation.navigate('FoodSelected');
-              //       // swipeRightFunc();
-              //       // _flatList.snapToItem(data.currentIndex);
-              //       // setTimeout(() => {
-              //       checkIfLiked(
-              //         data.finalResults[data.currentIndex]?.objectID
-              //       );
-              //       getUserPostId(data.finalResults[data.currentIndex]?.uid)
-              //       getImageUser(data.finalResults[data.currentIndex]?.uid)
-              //       setData({
-              //         ...data,
-              //         currentIndex: index + 1,
-              //         isSeeItem: true,
-              //       });
-              //       // }, 10);
-              //       // totalViewFunc(index);
-              //     } else if (data.currentIndex === 0) {
-              //       // setTimeout(() => {
-              //       setData({
-              //         ...data,
-              //         currentIndex: index,
-              //         isSeeItem: false,
-              //       });
-              //       // }, 100);
-              //       // totalViewFunc(index);
-              //     }
-              //   }
-              // }}
-              // onBeforeSnapToItem={(slideIndex) => { console.log('onBeforeSnapToItem: ', slideIndex) }}
               sliderWidth={width}
               itemWidth={width * 0.85}
               callbackOffsetMargin={1}
               activeSlideAlignment={"center"}
-              // activeAnimationType={"decay"}   Removed props
               layout={"tinder"}
               firstItem={firstItemNum}
-              // swipeThreshold={width}  Removed props
               enableSnap={true}
-              // enableMomentum={false}  Removed props
               useScrollView={false}
-              // lockScrollWhileSnapping={true}   Removed props
               inactiveSlideOpacity={1.0}
               inactiveSlideScale={1.0}
               initialScrollIndex={0}
@@ -2821,10 +2485,6 @@ const FoodScreen = (props) => {
               decelerationRate={0.25}
               onEndReachedThreshold={6}
               loop={true}
-              // loopClonesPerSide={3}
-              // ListEmptyComponent={renderEmpty()}
-              // slideStyle={{ transform: [{ rotate: "5deg" }] }}
-              // contentContainerCustomStyle={{ marginTop: 15 }}
               viewabilityConfig={{ itemVisiblePercentThreshold: 100 }}
               removeClippedSubviews={Platform.OS === "ios" ? false : true}
             />
@@ -2863,16 +2523,14 @@ const FoodScreen = (props) => {
             overflow: "hidden",
             padding: -5,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "white",
               alignItems: "center",
               justifyContent: "center",
               borderRadius: 35,
-            }}
-          >
+            }}>
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               <View style={{ marginTop: 10 }}>
                 <Image
@@ -2888,8 +2546,7 @@ const FoodScreen = (props) => {
                     fontFamily: "MontserratBold",
                     fontSize: 18,
                     marginTop: 10,
-                  }}
-                >
+                  }}>
                   {data.food_name}
                 </Title>
               </View>
@@ -2899,8 +2556,7 @@ const FoodScreen = (props) => {
                   marginLeft: 0,
                   width: width * 0.9,
                   borderRadius: 35,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 5,
@@ -2908,15 +2564,13 @@ const FoodScreen = (props) => {
                     justifyContent: "flex-start",
                     marginBottom: 5,
                     backgroundColor: "white",
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       width: width * 0.95,
                       marginTop: 0,
                       marginLeft: 15,
-                    }}
-                  >
+                    }}>
                     <Paragraph style={styles.searchDescStyle}>
                       Submit your picture for {data.food_name} by uploading your
                       picture, or taking one.
@@ -2933,8 +2587,7 @@ const FoodScreen = (props) => {
                   alignItems: "flex-start",
                   justifyContent: "space-evenly",
                   marginTop: 10,
-                }}
-              >
+                }}>
                 <View style={{ flex: 1, marginTop: 2, alignItems: "center" }}>
                   <TouchableOpacity onPress={() => useCameraHandler()}>
                     <Image
@@ -2974,24 +2627,21 @@ const FoodScreen = (props) => {
               onPress={() => {
                 postPhoto();
               }}
-              disabled={data.takenPicture === "" ? true : false}
-            >
+              disabled={data.takenPicture === "" ? true : false}>
               <View
                 style={{
                   marginTop: data.takenPicture === "" ? -20 : 10,
                   justifyContent: "center",
                   alignItems: "center",
                   marginBottom: 5,
-                }}
-              >
+                }}>
                 <LinearGradient
                   colors={
                     data.takenPicture === ""
                       ? ["#cccccc", "#cccccc", "#cccccc"]
                       : ["#fb8389", "#f70814", "#C90611"]
                   }
-                  style={styles.linearGradient}
-                >
+                  style={styles.linearGradient}>
                   <Text style={styles.buttonText}>Post Photo</Text>
                 </LinearGradient>
               </View>
@@ -3002,21 +2652,18 @@ const FoodScreen = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: 15,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 style={{ justifyContent: "center", alignItems: "center" }}
                 onPress={() => {
                   cancelUpdatePic();
-                }}
-              >
+                }}>
                 <Title
                   style={{
                     color: "black",
                     fontSize: 16,
                     fontFamily: "Montserrat",
-                  }}
-                >
+                  }}>
                   Cancel
                 </Title>
               </TouchableOpacity>
@@ -3055,26 +2702,20 @@ const FoodScreen = (props) => {
             overflow: "hidden",
             padding: -5,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <ScrollView
             style={{
               backgroundColor: "white",
               borderRadius: 35,
-              // height: height * 0.7,
             }}
             scrollEnabled={true}
-            // keyboardDismissMode="none"
-            // keyboardShouldPersistTaps="handled"
             keyboardShouldPersistTaps="always"
-            keyboardDismissMode={"interactive"}
-          >
+            keyboardDismissMode={"interactive"}>
             <TouchableOpacity
               onPress={() => {
                 cancelRatings();
               }}
-              style={{ marginVertical: 10, marginLeft: 25, marginTop: 25 }}
-            >
+              style={{ marginVertical: 10, marginLeft: 25, marginTop: 25 }}>
               <Feather name="x" color="grey" size={30} />
             </TouchableOpacity>
             <View
@@ -3082,8 +2723,7 @@ const FoodScreen = (props) => {
                 marginTop: 0,
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontFamily: "MontserratBold",
@@ -3091,8 +2731,7 @@ const FoodScreen = (props) => {
                   color: colors.text,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
+                }}>
                 {data?.currentItem?.foodInfo?.food_name}
               </Text>
             </View>
@@ -3103,8 +2742,7 @@ const FoodScreen = (props) => {
                 marginTop: 15,
                 marginBottom: 15,
                 marginLeft: 0,
-              }}
-            >
+              }}>
               <Image
                 style={styles.CurrentImage3}
                 source={{
@@ -3118,8 +2756,7 @@ const FoodScreen = (props) => {
                 marginTop: -10,
                 marginBottom: 0,
                 marginLeft: width * 0.1,
-              }}
-            >
+              }}>
               <Caption style={styles.titleStyle}>
                 Is this picture matched your item which your ordered?
               </Caption>
@@ -3129,10 +2766,8 @@ const FoodScreen = (props) => {
                 flexDirection: "row",
                 justifyContent: "center",
                 marginTop: 5,
-              }}
-            >
+              }}>
               <CheckBox
-                // center
                 onPress={() => {
                   setData({ ...data, isMatched: "yes" });
                 }}
@@ -3144,7 +2779,6 @@ const FoodScreen = (props) => {
                 checked={data.isMatched === "yes"}
               />
               <CheckBox
-                // center
                 onPress={() => {
                   setData({ ...data, isMatched: "no" });
                 }}
@@ -3177,8 +2811,7 @@ const FoodScreen = (props) => {
                 marginLeft: 30,
                 marginBottom: 0,
                 marginTop: 25,
-              }}
-            >
+              }}>
               <Icon name="comment-text" size={30} style={{ marginTop: 5 }} />
               <View style={{ felx: 1 }}>
                 <Input
@@ -3203,25 +2836,21 @@ const FoodScreen = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: -10,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   submitRatings();
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 10,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={["#fb8389", "#f70814", "#C90611"]}
-                    style={styles.linearGradient}
-                  >
+                    style={styles.linearGradient}>
                     <Text style={styles.buttonText}>Submit</Text>
                   </LinearGradient>
                 </View>
@@ -3230,20 +2859,17 @@ const FoodScreen = (props) => {
                 onPress={() => {
                   cancelRatings();
                 }}
-                style={{ marginBottom: 30 }}
-              >
+                style={{ marginBottom: 30 }}>
                 <View
                   style={{
                     marginTop: 10,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={["#fff", "#fff", "#fff"]}
-                    style={styles.linearGradient2}
-                  >
+                    style={styles.linearGradient2}>
                     <Text style={styles.buttonText2}>Cancel</Text>
                   </LinearGradient>
                 </View>
@@ -3255,7 +2881,6 @@ const FoodScreen = (props) => {
           visible={data.isSeeCommments}
           swipeDirection={["down"]} // can be string or an array
           swipeThreshold={height / 2} // default 100
-          // height={height* 0.90}
           onHardwareBackPress={() => {
             setData({ ...data, isSeeCommments: false });
           }}
@@ -3276,8 +2901,7 @@ const FoodScreen = (props) => {
             borderTopRightRadius: 25,
             borderBottomLeftRadius: 0,
             borderBottomRightRadius: 0,
-          }}
-        >
+          }}>
           <ModalContent>
             <View style={{ backgroundColor: "white", marginLeft: -25 }}>
               <FlatList
@@ -3322,18 +2946,13 @@ const FoodScreen = (props) => {
           style={{
             borderTopLeftRadius: 35,
             borderTopRightRadius: 35,
-            // borderBottomLeftRadius: 35,
-            // borderBottomRightRadius: 35,
             overflow: "hidden",
             marginLeft: 0,
             marginTop: 0,
             marginBottom: -50,
-            // marginRight: -10,
-            // padding: -5,
             width,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <View
             style={{
               marginBottom: -height / 2,
@@ -3344,22 +2963,19 @@ const FoodScreen = (props) => {
               width,
               marginLeft: 0,
               width,
-            }}
-          >
+            }}>
             <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: -15,
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontFamily: "MontserratBold",
                   fontSize: 24,
                   color: "#EE5B64",
-                }}
-              >
+                }}>
                 _____
               </Text>
             </View>
@@ -3369,8 +2985,7 @@ const FoodScreen = (props) => {
                   fontFamily: "MontserratBold",
                   fontSize: 24,
                   color: colors.text,
-                }}
-              >
+                }}>
                 Sort By
               </Text>
             </View>
@@ -3379,8 +2994,7 @@ const FoodScreen = (props) => {
                 flexDirection: "row",
                 justifyContent: "space-evenly",
                 marginTop: 15,
-              }}
-            >
+              }}>
               <CheckBox
                 // center
                 onPress={() => {
@@ -3411,8 +3025,7 @@ const FoodScreen = (props) => {
                 flexDirection: "row",
                 justifyContent: "space-evenly",
                 marginTop: 15,
-              }}
-            >
+              }}>
               <CheckBox
                 // center
                 onPress={() => {
@@ -3443,22 +3056,17 @@ const FoodScreen = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: 25,
-              }}
-            >
+              }}>
               <TouchableHighlight
                 underlayColor="white"
                 onPress={() => {
                   searchByFood();
-                }}
-              >
-                {/* <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}> */}
+                }}>
                 <LinearGradient
                   colors={["#fb8389", "#f70814", "#C90611"]}
-                  style={styles.linearGradient3}
-                >
+                  style={styles.linearGradient3}>
                   <Text style={styles.buttonText3}>Apply Sort</Text>
                 </LinearGradient>
-                {/* </View> */}
               </TouchableHighlight>
             </View>
           </View>
@@ -3491,18 +3099,13 @@ const FoodScreen = (props) => {
           style={{
             borderTopLeftRadius: 35,
             borderTopRightRadius: 35,
-            // borderBottomLeftRadius: 35,
-            // borderBottomRightRadius: 35,
             overflow: "hidden",
             marginLeft: 0,
             marginTop: 0,
             marginBottom: -50,
-            // marginRight: -10,
-            // padding: -5,
             width,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <View
             style={{
               marginBottom: -height / 2,
@@ -3513,22 +3116,19 @@ const FoodScreen = (props) => {
               width,
               marginLeft: 0,
               width,
-            }}
-          >
+            }}>
             <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: -15,
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontFamily: "MontserratBold",
                   fontSize: 24,
                   color: "#EE5B64",
-                }}
-              >
+                }}>
                 _____
               </Text>
             </View>
@@ -3538,8 +3138,7 @@ const FoodScreen = (props) => {
                   fontFamily: "MontserratBold",
                   fontSize: 24,
                   color: colors.text,
-                }}
-              >
+                }}>
                 Filters
               </Text>
             </View>
@@ -3549,8 +3148,7 @@ const FoodScreen = (props) => {
                   fontFamily: "MontserratSemiBold",
                   fontSize: 16,
                   color: colors.text,
-                }}
-              >
+                }}>
                 Type
               </Text>
             </View>
@@ -3568,8 +3166,7 @@ const FoodScreen = (props) => {
                   marginTop: 15,
                   borderRadius: 15,
                   backgroundColor: data.foodType === "" ? "#EE5B64" : "#707070",
-                }}
-              >
+                }}>
                 All
               </Button>
               <Button
@@ -3582,8 +3179,7 @@ const FoodScreen = (props) => {
                   borderRadius: 15,
                   backgroundColor:
                     data.foodType === "Drink" ? "#EE5B64" : "#707070",
-                }}
-              >
+                }}>
                 Drink
               </Button>
               <Button
@@ -3596,8 +3192,7 @@ const FoodScreen = (props) => {
                   borderRadius: 15,
                   backgroundColor:
                     data.foodType === "Appetizer" ? "#EE5B64" : "#707070",
-                }}
-              >
+                }}>
                 Appetizer
               </Button>
             </View>
@@ -3616,8 +3211,7 @@ const FoodScreen = (props) => {
                   borderRadius: 15,
                   backgroundColor:
                     data.foodType === "Dessert" ? "#EE5B64" : "#707070",
-                }}
-              >
+                }}>
                 Dessert
               </Button>
               <Button
@@ -3630,8 +3224,7 @@ const FoodScreen = (props) => {
                   borderRadius: 15,
                   backgroundColor:
                     data.foodType === "Entrée" ? "#EE5B64" : "#707070",
-                }}
-              >
+                }}>
                 Entrée
               </Button>
             </View>
@@ -3641,8 +3234,7 @@ const FoodScreen = (props) => {
                   fontFamily: "MontserratSemiBold",
                   fontSize: 16,
                   color: colors.text,
-                }}
-              >
+                }}>
                 Location
               </Text>
             </View>
@@ -3655,11 +3247,9 @@ const FoodScreen = (props) => {
                 marginLeft: 0,
                 marginTop: 5,
                 marginBottom: 5,
-              }}
-            >
+              }}>
               <View
-                style={{ flexDirection: "row", marginLeft: 25, marginTop: 5 }}
-              >
+                style={{ flexDirection: "row", marginLeft: 25, marginTop: 5 }}>
                 <FontAwesome name="map-marker" color={"#EE5B64"} size={20} />
                 <Text
                   style={{
@@ -3667,8 +3257,7 @@ const FoodScreen = (props) => {
                     fontSize: 14,
                     color: "#EE5B64",
                     marginLeft: 10,
-                  }}
-                >
+                  }}>
                   {data.myLocation}
                 </Text>
               </View>
@@ -3679,34 +3268,26 @@ const FoodScreen = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: 30,
-              }}
-            >
+              }}>
               <TouchableHighlight
                 underlayColor="white"
                 onPress={() => {
                   searchByFood();
-                }}
-              >
-                {/* <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}> */}
+                }}>
                 <LinearGradient
                   colors={["#fb8389", "#f70814", "#C90611"]}
-                  style={styles.linearGradient3}
-                >
+                  style={styles.linearGradient3}>
                   <Text style={styles.buttonText3}>Apply Filters</Text>
                 </LinearGradient>
-                {/* </View> */}
               </TouchableHighlight>
               <TouchableHighlight
                 underlayColor="white"
                 onPress={() => {
                   resetFilter();
-                }}
-              >
-                {/* <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 5 }} > */}
+                }}>
                 <LinearGradient
                   colors={["white", "white", "white"]}
-                  style={styles.linearGradient3}
-                >
+                  style={styles.linearGradient3}>
                   <Text
                     style={{
                       fontFamily: "MontserratBold",
@@ -3715,12 +3296,10 @@ const FoodScreen = (props) => {
                       marginLeft: 10,
                       marginRight: 30,
                       marginLeft: 30,
-                    }}
-                  >
+                    }}>
                     Reset
                   </Text>
                 </LinearGradient>
-                {/* </View> */}
               </TouchableHighlight>
             </View>
           </View>
@@ -3754,21 +3333,18 @@ const FoodScreen = (props) => {
             overflow: "hidden",
             padding: -5,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "white",
               borderRadius: 35,
               height: height * 0.75,
-            }}
-          >
+            }}>
             <TouchableOpacity
               onPress={() => {
                 setData({ ...data, isNoResults: false });
               }}
-              style={{ marginVertical: 10, marginLeft: 25, marginTop: 25 }}
-            >
+              style={{ marginVertical: 10, marginLeft: 25, marginTop: 25 }}>
               <Feather name="x" color="grey" size={30} />
             </TouchableOpacity>
             <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -3786,8 +3362,7 @@ const FoodScreen = (props) => {
                     fontFamily: "MontserratBold",
                     fontSize: 18,
                     marginTop: 10,
-                  }}
-                >
+                  }}>
                   No Restaurants
                 </Title>
               </View>
@@ -3803,36 +3378,25 @@ const FoodScreen = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: 30,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   setData({ ...data, isNoResults: false });
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 10,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={["#fb8389", "#f70814", "#C90611"]}
-                    style={styles.linearGradient}
-                  >
+                    style={styles.linearGradient}>
                     <Text style={styles.buttonText}>Try Again</Text>
                   </LinearGradient>
                 </View>
               </TouchableOpacity>
-              {/* <TouchableOpacity onPress={() => { setData({ ...data, isNoResults: false }) }} style={{ marginBottom: 30 }}>
-                    <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}>
-                        <LinearGradient colors={['#fff', '#fff', '#fff']} style={styles.linearGradient2}>
-                            <Text style={styles.buttonText2}>Available Locations</Text>
-                        </LinearGradient>
-                    </View>
-                </TouchableOpacity> */}
             </View>
           </View>
         </Modal1>
@@ -3865,13 +3429,11 @@ const FoodScreen = (props) => {
             overflow: "hidden",
             padding: -5,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <ScrollView
             keyboardShouldPersistTaps="always"
             keyboardDismissMode={"interactive"}
-            style={{ flex: 1, backgroundColor: "white", borderRadius: 35 }}
-          >
+            style={{ flex: 1, backgroundColor: "white", borderRadius: 35 }}>
             <TouchableOpacity
               onPress={() => {
                 setData({
@@ -3880,8 +3442,7 @@ const FoodScreen = (props) => {
                   myLocation: data.myOldLocation,
                 });
               }}
-              style={{ marginVertical: 10, marginLeft: 25, marginTop: 25 }}
-            >
+              style={{ marginVertical: 10, marginLeft: 25, marginTop: 25 }}>
               <Feather name="x" color="grey" size={30} />
             </TouchableOpacity>
             <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -3899,8 +3460,7 @@ const FoodScreen = (props) => {
                     fontFamily: "MontserratBold",
                     fontSize: 18,
                     marginTop: 10,
-                  }}
-                >
+                  }}>
                   Search New Location
                 </Title>
               </View>
@@ -3912,11 +3472,9 @@ const FoodScreen = (props) => {
                     justifyContent: "flex-start",
                     marginBottom: 5,
                     backgroundColor: "white",
-                  }}
-                >
+                  }}>
                   <View
-                    style={{ justifyContent: "center", alignItems: "center" }}
-                  >
+                    style={{ justifyContent: "center", alignItems: "center" }}>
                     <Paragraph style={styles.searchDescStyle3}>
                       Current Location
                     </Paragraph>
@@ -3931,8 +3489,7 @@ const FoodScreen = (props) => {
                     fontSize: 14,
                     color: "#EE5B64",
                     marginLeft: 10,
-                  }}
-                >
+                  }}>
                   {data.myLocation}
                 </Text>
               </View>
@@ -3944,18 +3501,12 @@ const FoodScreen = (props) => {
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={"search"} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-                // listViewDisplayed='auto'    // true/false/undefined
-                // fetchDetails
                 listViewDisplayed={"auto"}
                 keyboardShouldPersistTaps="always"
                 renderDescription={(row) => row.description} // custom description render
                 onPress={(data1, details = null) => {
-                  // 'details' is provided when fetchDetails = true
                   setData({ ...data, myLocation: data1.description });
                 }}
-                // getDefaultValue={() => {
-                //   return ''; // text input default value
-                // }}
                 query={{
                   key: "AIzaSyBv-uuNSNVNETBl0ol-jyI8zUs2yHr0QL4",
                   language: "en", // language of the results
@@ -3970,7 +3521,6 @@ const FoodScreen = (props) => {
                     color: "black",
                     borderColor: "black",
                     width: width * 0.8,
-                    // borderBottomWidth: 0
                   },
                   textInput: {
                     backgroundColor: "white",
@@ -3985,15 +3535,8 @@ const FoodScreen = (props) => {
                   },
                   poweredContainer: {
                     flex: 1,
-                    // width: 0,
-                    // height: 0,
-                    // marginLeft: -50,
-                    // backgroundColor: '#731c32'
-                    // backgroundColor: '#f2f2f2'
                   },
                 }}
-                // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-                // currentLocationLabel="Current location"
                 debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
               />
             </View>
@@ -4002,25 +3545,21 @@ const FoodScreen = (props) => {
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: 30,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   saveMyLocation();
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 10,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={["#fb8389", "#f70814", "#C90611"]}
-                    style={styles.linearGradient}
-                  >
+                    style={styles.linearGradient}>
                     <Text style={styles.buttonText}>Save Search</Text>
                   </LinearGradient>
                 </View>
@@ -4033,20 +3572,17 @@ const FoodScreen = (props) => {
                     myLocation: data.myOldLocation,
                   });
                 }}
-                style={{ marginBottom: 30 }}
-              >
+                style={{ marginBottom: 30 }}>
                 <View
                   style={{
                     marginTop: 10,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={["#fff", "#fff", "#fff"]}
-                    style={styles.linearGradient2}
-                  >
+                    style={styles.linearGradient2}>
                     <Text style={styles.buttonText2}>Cancel</Text>
                   </LinearGradient>
                 </View>
@@ -4065,7 +3601,6 @@ const FoodScreen = (props) => {
           onModalShow={() => {
             setData({ ...data, isLogin: true });
           }}
-          // onBackdropPress={() => { setData({ ...data, isLogin: false }); }}
           backdropColor="black"
           useNativeDriver={true}
           backdropOpacity={0.3}
@@ -4081,16 +3616,14 @@ const FoodScreen = (props) => {
             overflow: "hidden",
             padding: -5,
             backgroundColor: "transparent",
-          }}
-        >
+          }}>
           <ScrollView style={{ backgroundColor: "white" }}>
             <View>
               <TouchableOpacity
                 onPress={() => {
                   setData({ ...data, isLogin: false });
                 }}
-                style={{ marginVertical: 10, marginLeft: 15, marginTop: 15 }}
-              >
+                style={{ marginVertical: 10, marginLeft: 15, marginTop: 15 }}>
                 <Feather name="x" color="gray" size={30} />
               </TouchableOpacity>
             </View>
@@ -4109,8 +3642,7 @@ const FoodScreen = (props) => {
                     fontFamily: "MontserratBold",
                     fontSize: 18,
                     marginTop: 10,
-                  }}
-                >
+                  }}>
                   Guest User Alert
                 </Title>
               </View>
@@ -4120,8 +3652,7 @@ const FoodScreen = (props) => {
                   marginLeft: 0,
                   width: width * 0.9,
                   borderRadius: 35,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 5,
@@ -4129,15 +3660,13 @@ const FoodScreen = (props) => {
                     justifyContent: "flex-start",
                     marginBottom: 5,
                     backgroundColor: "white",
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       width: width * 0.75,
                       marginTop: 0,
                       marginLeft: 15,
-                    }}
-                  >
+                    }}>
                     <Paragraph style={styles.searchDescStyle}>
                       You are not signed into an account, which means you won’t
                       be able to use 100% of the apps functionalities.{" "}
@@ -4151,8 +3680,7 @@ const FoodScreen = (props) => {
                   marginLeft: 0,
                   width: width * 0.9,
                   borderRadius: 35,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 5,
@@ -4160,15 +3688,13 @@ const FoodScreen = (props) => {
                     justifyContent: "flex-start",
                     marginBottom: 5,
                     backgroundColor: "white",
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       width: width * 0.75,
                       marginTop: 0,
                       marginLeft: 15,
-                    }}
-                  >
+                    }}>
                     <Paragraph style={styles.searchDescStyle}>
                       As a Guest User you can:{" "}
                     </Paragraph>
@@ -4181,8 +3707,7 @@ const FoodScreen = (props) => {
                   marginLeft: 0,
                   width: width * 0.9,
                   borderRadius: 35,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 5,
@@ -4191,11 +3716,9 @@ const FoodScreen = (props) => {
                     marginBottom: 5,
                     backgroundColor: "white",
                     flexDirection: "row",
-                  }}
-                >
+                  }}>
                   <View
-                    style={{ marginTop: 7, marginLeft: 30, marginRight: 2 }}
-                  >
+                    style={{ marginTop: 7, marginLeft: 30, marginRight: 2 }}>
                     <Image
                       style={{ width: 9, height: 9, marginTop: 0 }}
                       source={require("../assets/icons/circle.png")}
@@ -4215,8 +3738,7 @@ const FoodScreen = (props) => {
                   marginLeft: 0,
                   width: width * 0.9,
                   borderRadius: 35,
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 5,
@@ -4225,11 +3747,9 @@ const FoodScreen = (props) => {
                     marginBottom: 5,
                     backgroundColor: "white",
                     flexDirection: "row",
-                  }}
-                >
+                  }}>
                   <View
-                    style={{ marginTop: 7, marginLeft: 30, marginRight: 2 }}
-                  >
+                    style={{ marginTop: 7, marginLeft: 30, marginRight: 2 }}>
                     <Image
                       style={{ width: 9, height: 9, marginTop: 0 }}
                       source={require("../assets/icons/circle.png")}
@@ -4246,57 +3766,43 @@ const FoodScreen = (props) => {
             </View>
             <TouchableOpacity
               onPress={() => {
-                // props.navigation.navigate({name:'SignUpScreen', params:{ routeCameFrom: 'MainTab', merge: true }}); setData({ ...data, isLogin: false });
                 setData({ ...data, isLogin: false });
                 props.navigation.navigate("LogIn", {
                   screen: "SignUpScreen",
-                  // params: {
-                  //   screen: 'SignUpScreen',
-                  // params: {
-                  //   screen: 'Media',
-                  // },
-                  // },
                 });
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginTop: 10,
                   justifyContent: "center",
                   alignItems: "center",
                   marginBottom: 5,
-                }}
-              >
+                }}>
                 <LinearGradient
                   colors={["#fb8389", "#f70814", "#C90611"]}
-                  style={styles.linearGradient}
-                >
+                  style={styles.linearGradient}>
                   <Text style={styles.buttonText}>Sign Up</Text>
                 </LinearGradient>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                // props.navigation.navigate({name:'SignInScreen', params:{ routeCameFrom: 'MainTab', merge: true }}); setData({ ...data, isLogin: false });
                 setData({ ...data, isLogin: false });
                 props.navigation.navigate("LogIn", {
                   screen: "SignInScreen",
                 });
               }}
-              style={{ marginBottom: 10 }}
-            >
+              style={{ marginBottom: 10 }}>
               <View
                 style={{
                   marginTop: 10,
                   justifyContent: "center",
                   alignItems: "center",
                   marginBottom: 5,
-                }}
-              >
+                }}>
                 <LinearGradient
                   colors={["#fff", "#fff", "#fff"]}
-                  style={styles.linearGradient2}
-                >
+                  style={styles.linearGradient2}>
                   <Text style={styles.buttonText2}>Sign In</Text>
                 </LinearGradient>
               </View>
@@ -4307,24 +3813,21 @@ const FoodScreen = (props) => {
                   onPress={() => {
                     setData({ ...data, isLogin: false });
                     login("facebook");
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       marginTop: 0,
                       justifyContent: "center",
                       alignItems: "center",
                       marginBottom: 5,
-                    }}
-                  >
+                    }}>
                     <LinearGradient
                       colors={
                         Platform.OS === "ios"
                           ? ["#fff", "#fff", "#fff"]
                           : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
                       }
-                      style={styles.linearGradientSocial}
-                    >
+                      style={styles.linearGradientSocial}>
                       <Image
                         style={{
                           marginLeft: 0,
@@ -4349,24 +3852,21 @@ const FoodScreen = (props) => {
                 onPress={() => {
                   setData({ ...data, isLogin: false });
                   login("google");
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 0,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={
                       Platform.OS === "ios"
                         ? ["#fff", "#fff", "#fff"]
                         : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
                     }
-                    style={styles.linearGradientSocial}
-                  >
+                    style={styles.linearGradientSocial}>
                     <Image
                       style={{
                         marginLeft: 0,
@@ -4389,24 +3889,21 @@ const FoodScreen = (props) => {
                   onPress={() => {
                     setData({ ...data, isLogin: false });
                     login("apple");
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       marginTop: 0,
                       justifyContent: "center",
                       alignItems: "center",
                       marginBottom: 5,
-                    }}
-                  >
+                    }}>
                     <LinearGradient
                       colors={
                         Platform.OS === "ios"
                           ? ["#fff", "#fff", "#fff"]
                           : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
                       }
-                      style={styles.linearGradientSocial}
-                    >
+                      style={styles.linearGradientSocial}>
                       <Image
                         style={{
                           marginLeft: 0,
@@ -4424,32 +3921,17 @@ const FoodScreen = (props) => {
                 </TouchableOpacity>
               </View>
             ) : null}
-            {/* {
-                  Platform.OS === 'ios' ? 
-                  <View style={styles.button} >
-                    <AppleAuthentication.AppleAuthenticationButton
-                        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-                        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
-                        cornerRadius={20}
-                        style={{ width: (width * 0.75), height: 50, marginTop: 5 }}
-                        onPress={() =>{ login('apple')}}
-                      /> 
-                  </View>
-                  : <View />
-                } */}
             <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: 10,
                 marginTop: 10,
-              }}
-            >
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   setData({ ...data, isLogin: false });
-                }}
-              >
+                }}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -4457,8 +3939,7 @@ const FoodScreen = (props) => {
                     alignItems: "center",
                     color: "#EE5B64",
                     fontFamily: "MontserratSemiBold",
-                  }}
-                >
+                  }}>
                   CONTINUE AS A GUEST
                 </Text>
               </TouchableOpacity>
@@ -4471,11 +3952,9 @@ const FoodScreen = (props) => {
                   justifyContent: "center",
                   marginBottom: 5,
                   backgroundColor: "white",
-                }}
-              >
+                }}>
                 <View
-                  style={{ width: width * 0.75, marginTop: 0, marginLeft: 0 }}
-                >
+                  style={{ width: width * 0.75, marginTop: 0, marginLeft: 0 }}>
                   <Paragraph style={styles.searchDescStyle3}>
                     NOTE: Your email address will be used to create an account
                     to store and keep track of your Reward Points earned and
@@ -4491,11 +3970,12 @@ const FoodScreen = (props) => {
               <TouchableOpacity
                 onPress={() => {
                   Linking.openURL(data.PrivacyPolicy);
-                }}
-              >
+                }}>
                 <Text
-                  style={[styles.color_textPrivateBold, { fontWeight: "bold" }]}
-                >
+                  style={[
+                    styles.color_textPrivateBold,
+                    { fontWeight: "bold" },
+                  ]}>
                   {" "}
                   Privacy policy
                 </Text>
@@ -4504,11 +3984,12 @@ const FoodScreen = (props) => {
               <TouchableOpacity
                 onPress={() => {
                   Linking.openURL(data.TermsConditions);
-                }}
-              >
+                }}>
                 <Text
-                  style={[styles.color_textPrivateBold, { fontWeight: "bold" }]}
-                >
+                  style={[
+                    styles.color_textPrivateBold,
+                    { fontWeight: "bold" },
+                  ]}>
                   {" "}
                   Terms And Conditions
                 </Text>
@@ -4537,16 +4018,9 @@ const FoodScreen = (props) => {
           backdropColor="black"
           useNativeDriver={true}
           backdropOpacity={0.3}
-          // hideModalContentWhileAnimating
           onRequestClose={() => {
             setData({ ...data, isSeeItem: false });
           }}
-          // swipeDirection={"down"}
-          // swipeThreshold={(height * 0.3)}
-          // onSwipeStart={()=>{console.log('Start')}}
-          // onSwipeMove={()=>{console.log('Move')}}
-          // onSwipeComplete={()=>{console.log('Complete'); setData({ ...data, isSeeItem: false });}}
-          // onSwipeCancel={()=>{setData({ ...data, isSeeItem: true });}}
           style={{
             flex: 1,
             zIndex: 0,
@@ -4557,32 +4031,10 @@ const FoodScreen = (props) => {
             width,
             borderTopLeftRadius: 15,
             borderTopRightRadius: 15,
-            // borderBottomLeftRadius: 10,
-            // borderBottomRightRadius: 10,
             overflow: "hidden",
             padding: 0,
             backgroundColor: "transparent",
-          }}
-        >
-          {/* <Modal
-              visible={data.isSeeItem}
-              swipeDirection={['down']} // can be string or an array
-              swipeThreshold={height/2} // default 100
-              height={height* 0.90}
-              onHardwareBackPress={() => {
-                setData({ ...data, isSeeItem: false })
-              }}
-              onSwipeOut={() => {
-                setData({ ...data, isSeeItem: false })
-              }}
-              modalAnimation={new SlideAnimation({
-                slideFrom: 'bottom',
-              })}
-              onTouchOutside={() => {
-                setData({ ...data, isSeeItem: false })
-              }}
-              modalStyle={{ marginTop: 85, borderTopLeftRadius: 25, borderTopRightRadius: 25, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
-            > */}
+          }}>
           <ScrollView style={{ marginTop: 0, width, height, marginLeft: 0 }}>
             <TouchableWithoutFeedback>
               <Card
@@ -4595,8 +4047,7 @@ const FoodScreen = (props) => {
                   borderRadius: 5,
                   marginTop: 0,
                   zIndex: -1,
-                }}
-              >
+                }}>
                 <TouchableHighlight
                   onPress={() => {
                     setData({ ...data, isSeeItem: false });
@@ -4614,19 +4065,8 @@ const FoodScreen = (props) => {
                     justifyContent: "center",
                     alignItems: "center",
                     elevation: 10,
-                  }}
-                >
-                  <View
-                    style={
-                      {
-                        // elevation: 10,
-                        // shadowColor: '#000',
-                        // shadowOffset: { width: 0, height: 2 },
-                        // shadowOpacity: 0.5,
-                        // shadowRadius: 2
-                      }
-                    }
-                  >
+                  }}>
+                  <View>
                     <Image
                       style={{ width: 40, height: 40 }}
                       source={require("../assets/icons/close2.png")}
@@ -4663,8 +4103,7 @@ const FoodScreen = (props) => {
                       alignItems: "center",
                       elevation: 10,
                       backgroundColor: "white",
-                    }}
-                  >
+                    }}>
                     <View
                       style={{
                         elevation: 10,
@@ -4672,8 +4111,7 @@ const FoodScreen = (props) => {
                         shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.5,
                         shadowRadius: 2,
-                      }}
-                    >
+                      }}>
                       <Image
                         style={{ width: 40, height: 40 }}
                         source={require("../assets/icons/star-plus3.png")}
@@ -4697,8 +4135,7 @@ const FoodScreen = (props) => {
                         newImage
                         ? -5
                         : -90,
-                  }}
-                >
+                  }}>
                   <Card.Cover
                     style={{
                       flex: 1,
@@ -4745,8 +4182,7 @@ const FoodScreen = (props) => {
                         isSeeCommments: true,
                         commentsList: arr,
                       });
-                    }}
-                  >
+                    }}>
                     <View
                       style={{
                         backgroundColor: "white",
@@ -4756,8 +4192,7 @@ const FoodScreen = (props) => {
                         height: 40,
                         justifyContent: "center",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <Icon
                         name="message-bulleted"
                         size={30}
@@ -4768,50 +4203,6 @@ const FoodScreen = (props) => {
                 ) : (
                   <View />
                 )}
-                {/* {data.finalResults[data.currentIndex]?.foodInfo.image ===
-                  oldImage ||
-                data.finalResults[data.currentIndex]?.foodInfo.image ===
-                  newImage ? (
-                  <View />
-                ) : (
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-                      elevation: 1,
-                      marginLeft: width * 0.8,
-                      backgroundColor: "white",
-                      height: 50,
-                      width: 50,
-                      borderRadius: 25,
-                      marginTop: data.finalResults[data.currentIndex]?.comments
-                        ? -35
-                        : -25,
-                    }}
-                    onPress={() => {
-                      shareNow(
-                        data.finalResults[data.currentIndex]?.foodInfo
-                          .food_name,
-                        data.finalResults[data.currentIndex]?.restName,
-                        data.finalResults[data.currentIndex].restWebsite
-                      );
-                    }}
-                  >
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 10,
-                        marginLeft: -5,
-                      }}
-                    >
-                      <FontAwesome
-                        name="share-alt"
-                        color={"#EE5B64"}
-                        size={30}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )} */}
                 {data.finalResults[data.currentIndex]?.foodInfo.steps !==
                 undefined ? (
                   <View
@@ -4823,15 +4214,13 @@ const FoodScreen = (props) => {
                       flexDirection: "row",
                       justifyContent: "flex-start",
                       alignItems: "flex-end",
-                    }}
-                  >
+                    }}>
                     <View
                       style={{
                         elevation: 5,
                         textShadowColor: "white",
                         textShadowRadius: 5,
-                      }}
-                    >
+                      }}>
                       <Image
                         style={{
                           flex: 1,
@@ -4849,8 +4238,7 @@ const FoodScreen = (props) => {
                     <TouchableOpacity
                       onPress={() => {
                         gotoAccount(userPostId);
-                      }}
-                    >
+                      }}>
                       <Text
                         style={{
                           color: "black",
@@ -4860,37 +4248,10 @@ const FoodScreen = (props) => {
                           elevation: 2,
                           textShadowColor: "white",
                           textShadowRadius: 5,
-                        }}
-                      >
+                        }}>
                         @{userPostId}
                       </Text>
                     </TouchableOpacity>
-                    {/* {data.finalResults[data.currentIndex]?.userPostId !==
-                  undefined ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        gotoAccount(
-                          getUserPostId(data.finalResults[data.currentIndex]?.uid)
-                        );
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "black",
-                          fontFamily: "MontserratSemiBold",
-                          marginLeft: 5,
-                          marginTop: -30,
-                          elevation: 2,
-                          textShadowColor: "white",
-                          textShadowRadius: 5,
-                        }}
-                      >
-                        @asdsadasd{getUserPostId(data.finalResults[data.currentIndex]?.uid)}
-                      </Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <View />
-                  )} */}
                   </View>
                 ) : (
                   <View />
@@ -4923,16 +4284,14 @@ const FoodScreen = (props) => {
                         data.finalResults[data.currentIndex]?.restName,
                         data.finalResults[data.currentIndex]?.objectID
                       );
-                    }}
-                  >
+                    }}>
                     <View
                       style={{
                         justifyContent: "center",
                         alignItems: "center",
                         marginTop: 10,
                         marginLeft: 0,
-                      }}
-                    >
+                      }}>
                       <Image
                         style={{ width: 30, height: 30 }}
                         source={require("../assets/icons/heart-plus.png")}
@@ -4963,16 +4322,14 @@ const FoodScreen = (props) => {
                       removeFromFavorites(
                         data.finalResults[data.currentIndex]?.objectID
                       );
-                    }}
-                  >
+                    }}>
                     <View
                       style={{
                         justifyContent: "center",
                         alignItems: "center",
                         marginTop: 10,
                         marginLeft: 0,
-                      }}
-                    >
+                      }}>
                       <Image
                         style={{ width: 30, height: 30 }}
                         source={require("../assets/icons/heart-delete.png")}
@@ -4985,24 +4342,20 @@ const FoodScreen = (props) => {
                     flexDirection: "row",
                     justifyContent: "flex-start",
                     marginLeft: 0,
-                  }}
-                >
+                  }}>
                   <View
                     style={{
                       flexDirection: "row",
                       margin: 15,
                       width: width * 0.57,
                       justifyContent: "flex-start",
-                    }}
-                  >
-                    {/* <Avatar.Image size={50} source={{ uri: data.restsImageList[index] }} /> */}
+                    }}>
                     <Card.Content style={{ marginTop: -5, marginLeft: -5 }}>
                       <Title
                         style={{
                           fontSize: 14,
                           fontFamily: "MontserratSemiBold",
-                        }}
-                      >
+                        }}>
                         {
                           data.finalResults[data.currentIndex]?.foodInfo
                             .food_name
@@ -5016,8 +4369,7 @@ const FoodScreen = (props) => {
                               fontSize: 12,
                               fontFamily: "Montserrat",
                               marginTop: 0,
-                            }}
-                          >
+                            }}>
                             {data.finalResults[data.currentIndex]?.restName}
                           </Paragraph>
                           <Text
@@ -5025,8 +4377,7 @@ const FoodScreen = (props) => {
                               fontSize: 14,
                               fontFamily: "MontserratSemiBold",
                               marginTop: 5,
-                            }}
-                          >
+                            }}>
                             {data.finalResults[data.currentIndex]?.foodInfo
                               .price !== 0
                               ? "$ "
@@ -5048,16 +4399,14 @@ const FoodScreen = (props) => {
                       marginTop: 15,
                       alignItems: "flex-start",
                       marginLeft: 35,
-                    }}
-                  >
+                    }}>
                     <Caption
                       style={{
                         fontFamily: "MontserratBold",
                         fontSize: 11,
                         marginTop: 5,
                         marginLeft: -25,
-                      }}
-                    >
+                      }}>
                       "{data.finalResults[data.currentIndex]?.foodInfo.foodType}
                       "
                     </Caption>
@@ -5066,8 +4415,7 @@ const FoodScreen = (props) => {
                         flexDirection: "row",
                         justifyContent: "flex-start",
                         marginLeft: -width * 0.12,
-                      }}
-                    >
+                      }}>
                       {data.finalResults[data.currentIndex]?.totalView === 0 ? (
                         <View />
                       ) : (
@@ -5078,8 +4426,7 @@ const FoodScreen = (props) => {
                             marginLeft: 1,
                             flexDirection: "row",
                             marginTop: -5,
-                          }}
-                        >
+                          }}>
                           <View>
                             <Button
                               labelStyle={{
@@ -5101,8 +4448,7 @@ const FoodScreen = (props) => {
                                 color: colors.text,
                                 marginLeft: -28,
                                 marginTop: -2,
-                              }}
-                            >
+                              }}>
                               {data.finalResults[data.currentIndex]
                                 ?.totalView === 0
                                 ? "None"
@@ -5123,8 +4469,7 @@ const FoodScreen = (props) => {
                             marginLeft: -25,
                             flexDirection: "row",
                             marginTop: -5,
-                          }}
-                        >
+                          }}>
                           <View>
                             <Button
                               labelStyle={{
@@ -5146,8 +4491,7 @@ const FoodScreen = (props) => {
                                 color: "#FFC607",
                                 marginLeft: -22,
                                 marginTop: -2,
-                              }}
-                            >
+                              }}>
                               {data.finalResults[data.currentIndex]?.foodInfo
                                 .Rate.qualityRate === 0
                                 ? "None"
@@ -5167,8 +4511,7 @@ const FoodScreen = (props) => {
                     marginTop: 5,
                     marginRight: 10,
                     marginBottom: 10,
-                  }}
-                >
+                  }}>
                   {data.finalResults[data.currentIndex]?.foodInfo?.tags?.trim()
                     .length !== 0 ? (
                     tagSeperator(
@@ -5186,8 +4529,7 @@ const FoodScreen = (props) => {
                       width,
                       marginLeft: -10,
                       justifyContent: "space-evenly",
-                    }}
-                  >
+                    }}>
                     <TouchableOpacity
                       onPress={() => {
                         Linking.openURL(
@@ -5195,15 +4537,13 @@ const FoodScreen = (props) => {
                             data.finalResults[data.currentIndex]?.restWebsite
                           }`
                         );
-                      }}
-                    >
+                      }}>
                       <View
                         style={{
                           alignItems: "center",
                           flexDirection: "row",
                           marginTop: -5,
-                        }}
-                      >
+                        }}>
                         <View>
                           <Button
                             labelStyle={{
@@ -5224,8 +4564,7 @@ const FoodScreen = (props) => {
                               fontSize: 11,
                               color: colors.text,
                               marginLeft: -25,
-                            }}
-                          >
+                            }}>
                             Website
                           </Text>
                         </View>
@@ -5238,15 +4577,13 @@ const FoodScreen = (props) => {
                           data.finalResults[data.currentIndex]?.restAddress
                         );
                         console.log("phone");
-                      }}
-                    >
+                      }}>
                       <View
                         style={{
                           alignItems: "center",
                           flexDirection: "row",
                           marginTop: -5,
-                        }}
-                      >
+                        }}>
                         <View>
                           <Button
                             labelStyle={{
@@ -5267,8 +4604,7 @@ const FoodScreen = (props) => {
                               fontSize: 11,
                               color: colors.text,
                               marginLeft: -25,
-                            }}
-                          >
+                            }}>
                             Locate
                           </Text>
                         </View>
@@ -5278,16 +4614,13 @@ const FoodScreen = (props) => {
                       style={{ marginLeft: 0 }}
                       onPress={() => {
                         callNow(data.finalResults[data.currentIndex]?.phoneNum);
-                        // console.log("phone");
-                      }}
-                    >
+                      }}>
                       <View
                         style={{
                           alignItems: "center",
                           flexDirection: "row",
                           marginTop: -5,
-                        }}
-                      >
+                        }}>
                         <View>
                           <Button
                             labelStyle={{
@@ -5308,8 +4641,7 @@ const FoodScreen = (props) => {
                               fontSize: 11,
                               color: colors.text,
                               marginLeft: -25,
-                            }}
-                          >
+                            }}>
                             Call
                           </Text>
                         </View>
@@ -5321,15 +4653,13 @@ const FoodScreen = (props) => {
                         orderOnline(
                           data.finalResults[data.currentIndex]?.restOrderWeb
                         );
-                      }}
-                    >
+                      }}>
                       <View
                         style={{
                           alignItems: "center",
                           flexDirection: "row",
                           marginTop: -5,
-                        }}
-                      >
+                        }}>
                         <View>
                           <Button
                             labelStyle={{
@@ -5350,8 +4680,7 @@ const FoodScreen = (props) => {
                               fontSize: 11,
                               color: colors.text,
                               marginLeft: -25,
-                            }}
-                          >
+                            }}>
                             Order
                           </Text>
                         </View>
@@ -5369,56 +4698,7 @@ const FoodScreen = (props) => {
                         flexDirection: "row",
                         justifyContent: "flex-start",
                         alignItems: "flex-end",
-                      }}
-                    >
-                      {/* <View
-                    style={{
-                      elevation: 5,
-                      textShadowColor: "white",
-                      textShadowRadius: 5,
-                    }}
-                  >
-                    <Image
-                      style={{
-                        flex: 1,
-                        elevation: 5,
-                        marginLeft: 10,
-                        width: 60,
-                        height: 60,
-                        marginTop: 5,
-                        borderRadius: 10,
-                      }}
-                      source={{ uri: getImageUser(data.finalResults[data.currentIndex]?.uid) }}
-                      fadeDuration={100}
-                    />
-                  </View>
-                  {data.finalResults[data.currentIndex]?.userPostId !==
-                  undefined ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        gotoAccount(
-                          getUserPostId(data.finalResults[data.currentIndex]?.uid)
-                        );
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "black",
-                          fontFamily: "MontserratSemiBold",
-                          marginLeft: 5,
-                          marginTop: -30,
-                          elevation: 2,
-                          textShadowColor: "white",
-                          textShadowRadius: 5,
-                        }}
-                      >
-                        @{getUserPostId(data.finalResults[data.currentIndex]?.uid)}
-                      </Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <View />
-                  )} */}
-                    </View>
+                      }}></View>
                     <View
                       style={{
                         justifyContent: "flex-start",
@@ -5427,8 +4707,7 @@ const FoodScreen = (props) => {
                         flexDirection: "row",
                         marginTop: 30,
                         marginBottom: 10,
-                      }}
-                    >
+                      }}>
                       <View>
                         <Button
                           labelStyle={{
@@ -5450,8 +4729,7 @@ const FoodScreen = (props) => {
                             color: colors.text,
                             marginLeft: -15,
                             marginTop: -2,
-                          }}
-                        >
+                          }}>
                           {data.finalResults[data.currentIndex]?.totalView === 0
                             ? "None"
                             : data.finalResults[data.currentIndex]?.totalView}
@@ -5475,16 +4753,31 @@ const FoodScreen = (props) => {
                     </View>
                   </View>
                 )}
-                <TouchableOpacity 
-                  onPress={()=>{reportItem(data.finalResults[data.currentIndex])}}
-                  style={{ justifyContent: 'center', alignItems: 'center', marginTop: 15 }}
-                >
+                <TouchableOpacity
+                  onPress={() => {
+                    reportItem(data.finalResults[data.currentIndex]);
+                  }}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 15,
+                  }}>
                   <Image
-                    style={{ "resizeMode": "stretch", "backgroundColor": "#ffffff", width: 30, height: 30 }}
-                    source={require('../assets/icons/warning.png')}
+                    style={{
+                      resizeMode: "stretch",
+                      backgroundColor: "#ffffff",
+                      width: 30,
+                      height: 30,
+                    }}
+                    source={require("../assets/icons/warning.png")}
                     fadeDuration={0}
                   />
-                  <View style={{ justifyContent: 'center', alignItems: 'center', marginLeft: -5 }}>
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginLeft: -5,
+                    }}>
                     <Text style={styles.titleStyle9}>Report</Text>
                   </View>
                 </TouchableOpacity>
@@ -5505,10 +4798,6 @@ const FoodScreen = (props) => {
   );
 };
 
-// function mapStateToProps({ auth }) {
-// 	return { token: auth.token };
-// }
-
 export default connect(null, actions)(FoodScreen);
 
 const styles = StyleSheet.create({
@@ -5524,12 +4813,10 @@ const styles = StyleSheet.create({
     color: "black",
     margin: 16,
     right: 0,
-    // bottom: width * 0.6,
   },
   descCitiesStyle: {
     color: "black",
     marginLeft: 15,
-    // marginTop: -5,
     fontFamily: "MontserratSemiBold",
   },
   titleStyle10: {
@@ -5569,8 +4856,6 @@ const styles = StyleSheet.create({
   },
   CurrentImage3: {
     flex: 1,
-    // width: 50,
-    // height: 50,
     width: width * 0.5,
     height: width * 0.5,
     borderRadius: 25,
@@ -5578,8 +4863,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   CurrentImage2: {
-    // width: 50,
-    // height: 50,
     width: catWidth,
     height: catHeight,
     borderRadius: 5,
@@ -5596,14 +4879,8 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratSemiBold",
     fontSize: 16,
     width: width * 0.7,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     lineHeight: 25,
     textAlign: "center",
-    // fontWeight: 'bold',
-    // textShadowRadius: 5,
-    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    // textShadowOffset: { width: -1, height: 1 }
   },
   titleStyle8: {
     fontFamily: "Montserrat",
@@ -5612,10 +4889,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: width * 0.6,
     marginTop: 0,
-    // fontWeight: 'bold',
-    // textShadowRadius: 5,
-    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    // textShadowOffset: { width: -1, height: 1 }
   },
   titleStyle6: {
     fontFamily: "Montserrat",
@@ -5624,10 +4897,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: width * 0.7,
     lineHeight: 20,
-    // fontWeight: 'bold',
-    // textShadowRadius: 5,
-    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    // textShadowOffset: { width: -1, height: 1 }
   },
   searchDescStyle: {
     textAlign: "left",
@@ -5703,7 +4972,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
-    // width: width * 0.40,
     marginLeft: 10,
     marginTop: 10,
     elevation: 4,

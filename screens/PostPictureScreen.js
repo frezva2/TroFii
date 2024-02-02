@@ -12,7 +12,6 @@ import {
   ActivityIndicator,
   TouchableHighlight,
   Keyboard,
-  Input,
   Alert,
   TextInput,
   Share,
@@ -20,27 +19,17 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
-  Avatar,
-  Button,
-  Card,
   Title,
   Paragraph,
   Searchbar,
   DefaultTheme,
-  List,
-  RadioButton,
   useTheme,
 } from "react-native-paper";
 import * as actions from "../actions";
 import { connect } from "react-redux";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Camera } from "expo-camera";
-import update from "immutability-helper";
 import Icon from "react-native-vector-icons/Ionicons";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { StatusBar } from "expo-status-bar";
-import * as Permissions from "expo-permissions";
 import axios from "axios";
 import uuid from "uuid-v4";
 import Modal from "react-native-modal";
@@ -49,18 +38,14 @@ import Feather from "react-native-vector-icons/Feather";
 import FindRestaurantScreen from "./FindRestaurantScreen";
 import Geocoder from "react-native-geocoding";
 import ConfettiCannon from "react-native-confetti-cannon";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CheckBox } from "react-native-elements";
 import {
   InstantSearch,
   Configure,
   connectInfiniteHits,
   connectSearchBox,
-  connectHighlight,
-  // connectRefinementList,
 } from "react-instantsearch-native";
 import * as Sharing from "expo-sharing";
-import { captureRef, captureScreen } from "react-native-view-shot";
 
 const firebase = require("firebase/app").default;
 require("firebase/auth");
@@ -110,7 +95,7 @@ const attrToRetr = [
   "tempChecker.hour",
 ];
 
-const client = algoliasearch("K9M4MC44R0", "dfc4ea1c057d492e96b0967f050519c4", {
+const client = algoliasearch("", "", {
   timeouts: {
     connect: 1,
     read: 2, // The value of the former `timeout` parameter
@@ -251,47 +236,9 @@ const PostPictureScreen = (props) => {
     blob.close();
 
     return await snapshot.ref.getDownloadURL();
-    // return await snapshot.downloadURL;
   }
-  // const shareNow = async () => {
-  //   const userToken = await AsyncStorage.getItem('userToken');
-  //   if (userToken !== null) {
-  //     Sharing.isAvailableAsync().then(async (isAvailableAsync) => {
-  //         if(isAvailableAsync) {
-  //             // await captureRef(_flatListItem, {
-  //             //     result: 'tmpfile',
-  //             //     quality: 0.25,
-  //             //     format: 'jpg',
-  //               // })
-  //               captureScreen({
-  //                 result: 'tmpfile',
-  //                 quality: 0.25,
-  //                 format: 'jpg',
-  //               })
-  //             .then(async (uri) => {
-  //                 let uploadUrl = await uploadImageShareAsync(uri);
-  //                 Alert.alert(
-  //                   'Share',
-  //                   'Do you want to share this item? ',
-  //                   [
-  //                     { text: 'No', onPress: () => { }, style: 'cancel' },
-  //                     { text: 'Yes', onPress: async () => {
-  //                       const result = await Share.share({
-  //                           url: uri,
-  //                           message: `I recommend you ${food_name} from ${restaurantName}. Find more about this item with TroFii App: \nhttps://www.TroFii.Net \n\n${restWebsite} \n\n${uploadUrl}`
-  //                       });
-  //                       motionEvent();
-  //                   }}]);
-  //             });
-  //         }
-  //     })
-  //   } else {
-  //     setData({ ...data, isLogin: true });
-  //   }
-  // }
 
   const onSearchStateChange = (results) => {
-    // console.log(results)
     if (!isEquivalent(data.stateNavigation, results)) {
       if (tempFoodName !== results.query) {
         setFoodName(results.query);
@@ -300,8 +247,6 @@ const PostPictureScreen = (props) => {
           setData({
             ...data,
             stateNavigation: results,
-            // tempFoodName: results.query,
-            // food_name: results.query,
             isSelectRest: false,
           });
         }, 10);
@@ -311,14 +256,10 @@ const PostPictureScreen = (props) => {
           setData({
             ...data,
             stateNavigation: results,
-            // tempFoodName: results.query,
-            // food_name: props?.route?.params?.food_name,
             isSelectRest: false,
           });
         }, 10);
       }
-      //   setData({ ...data, food_name: searchState.foodInfo.food_name });
-      //   setData({ ...data, noResults: searchState.noResults, initialState: true });
     }
   };
   useEffect(() => {
@@ -344,7 +285,6 @@ const PostPictureScreen = (props) => {
       setFoodName(props?.route?.params?.food_name);
       setData({
         ...data,
-        // food_name: props?.route?.params?.food_name,
         isSelectRest: false,
       });
     }
@@ -380,11 +320,6 @@ const PostPictureScreen = (props) => {
         setPlaceId("");
         setData({
           ...data,
-          // restaurantName: props?.route?.params?.restaurantName,
-          // restaurantUid: props?.route?.params?.restaurantUid,
-          // restAddress: props?.route?.params?.restAddress,
-          // food_name: props?.route?.params?.food_name,
-          // place_id: '',
           isSelectRest: false,
         });
         setIsLoading(false);
@@ -393,9 +328,7 @@ const PostPictureScreen = (props) => {
         checkFoodId();
       }
     }
-    return () => {
-      // console.log('unmounting...');
-    };
+    return () => {};
   }, [props?.route?.params]);
   const useCameraHandler = async () => {
     const { currentUser } = firebase.auth();
@@ -453,21 +386,14 @@ const PostPictureScreen = (props) => {
   const checkFoodId = () => {
     if (restAddress !== undefined && restAddress !== "") {
       Geocoder.from(restAddress).then((json) => {
-        // setTimeout(() => {
         setRestLocation(json.results[0].geometry.location);
         setData({
           ...data,
-          //   restLocation: json.results[0].geometry.location,
-          //   food_name: props?.route?.params?.food_name,
           isSelectRest: false,
         });
-        //   }, 10);
       });
     }
-    // let query = '';
-    // console.log('checkFoodId 2: ', data );
     if (restaurantName !== "" && food_name !== "" && food_name !== undefined) {
-      // query = `${props?.route?.params?.restaurantName} ${data.food_name}`;
       const index = client.initIndex("worests");
       index
         .search(`${restaurantName} ${food_name}`, {
@@ -480,30 +406,22 @@ const PostPictureScreen = (props) => {
         .then((responses) => {
           const str = JSON.stringify(responses.hits);
           let object = JSON.parse(str);
-          //   console.log('checkFoodId 1: ',data.objectID);
           if (
             object[0] !== undefined &&
             object[0] !== null &&
             object.length !== 0
           ) {
-            // setTimeout(() => {
             setFoodObjectId(object[0]?.objectID);
             setData({
               ...data,
               isSelectRest: false,
             });
-            // }, 10);
           } else {
-            // console.log('null 1');
-            // setTimeout(() => {
             setFoodObjectId("");
             setData({
               ...data,
-              // foodObjectId: '',
-              // food_name: props?.route?.params?.food_name,
               isSelectRest: false,
             });
-            // }, 10);
           }
         });
     } else {
@@ -520,27 +438,17 @@ const PostPictureScreen = (props) => {
           const str = JSON.stringify(responses.hits);
           let object = JSON.parse(str);
           if (object !== undefined && object !== null && object.length !== 0) {
-            //   console.log('checkFoodId 2: ',object[0]?.objectID);
-            //   setTimeout(() => {
             setFoodObjectId(object[0]?.objectID);
             setData({
               ...data,
-              //   foodObjectId: object[0]?.objectID,
-              // food_name: props?.route?.params?.food_name,
               isSelectRest: false,
             });
-            //   }, 10);
           } else {
-            //   console.log('null 2');
-            //   setTimeout(() => {
             setFoodObjectId("");
             setData({
               ...data,
-              //   foodObjectId: '',
-              // food_name: props?.route?.params?.food_name,
               isSelectRest: false,
             });
-            //   }, 10);
           }
         });
     }
@@ -559,15 +467,7 @@ const PostPictureScreen = (props) => {
       setBusinessStatus(newResponse?.data?.result?.business_status);
       setData({
         ...data,
-        // restAxiosData: newResponse,
-        // restaurantName: restaurantName,
-        // restAddress: newResponse?.data?.result?.formatted_address,
-        // restWebsite: newResponse?.data?.result?.website,
-        // phoneNum: newResponse?.data?.result?.formatted_phone_number,
-        // business_status: newResponse?.data?.result?.business_status,
-        // food_name: props?.route?.params?.food_name,
         isSelectRest: false,
-        // place_id,
       });
       setIsLoading(false);
     }, 10);
@@ -660,7 +560,6 @@ const PostPictureScreen = (props) => {
                 followingNum: 0,
                 followersList: { 0: "_" },
                 followingList: { 0: "_" },
-                // expoToken: this.state.expoToken,
                 RestNumFollowers: 0,
                 RestApptNum: 0,
                 RestDrinkNum: 0,
@@ -1019,7 +918,6 @@ const PostPictureScreen = (props) => {
     }
   };
   const postPhoto = () => {
-    //   console.log('postPhoto',data.foodObjectId);
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1;
     const day = new Date().getDate();
@@ -1043,11 +941,6 @@ const PostPictureScreen = (props) => {
     const restImageRef = firebase
       .database()
       .ref(`/restImage/${restaurantUid}/${foodObjectId}`);
-    // console.log(restaurantUid, foodObjectId)
-    //   restImageRef.once("value").then((snapshot) => {
-    //     if(snapshot.val() !== null) {
-    //       snapshot.forEach((data) => {
-    // if (data.val().uidUser !== undefined && data.val().uidUser.toString() !== currentUser.uid.toString()) {
     firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         const userRef = firebase.database().ref(`/users/${user.uid}`);
@@ -1103,23 +996,8 @@ const PostPictureScreen = (props) => {
                 food_name: food_name,
                 foodType: foodType,
               });
-              // shareNow();
-              // setData({
-              //   ...data,
-              //     isSubmitImage: false,
-              //     tempRestId: snapShot.key,
-              //     restaurantName: '',
-              //     food_name: '',
-              //     restaurantUid: '',
-              //     place_id: '',
-              // })
               Sharing.isAvailableAsync().then(async (isAvailableAsync) => {
                 if (isAvailableAsync) {
-                  // await captureRef(_flatListItem, {
-                  //     result: 'tmpfile',
-                  //     quality: 0.25,
-                  //     format: 'jpg',
-                  // })
                   captureScreen({
                     result: "tmpfile",
                     quality: 0.25,
@@ -1141,9 +1019,6 @@ const PostPictureScreen = (props) => {
                               user.uid,
                               snapShot.key
                             );
-                            // setRestaurantName('');
-                            // setRestaurantUid('');
-                            // setRestAddress('');
                             setPlaceId("");
                             setFoodName("");
                             setTempFoodName("");
@@ -1184,14 +1059,6 @@ const PostPictureScreen = (props) => {
         });
       }
     });
-    // } else {
-    //     Alert.alert('Too Many Submissions Attempted', 'You allow to submit an image only one time for each menu item.', [{ text: 'OK',
-    //         onPress: () => {},
-    //         style: 'cancel' }], { cancelable: false });
-    //   }
-    //   })
-    // }
-    //   });
   };
   const whichPostFunc = () => {
     const { currentUser } = firebase.auth();
@@ -1240,41 +1107,14 @@ const PostPictureScreen = (props) => {
     const hrs = new Date().getHours();
     const min = new Date().getMinutes();
     const time = `${month}/${day}/${year} ${hrs}:${min}`;
-    // const sec = new Date().getSeconds();
     const milsec = new Date().getMilliseconds();
-    // const dateID = ((year * 10000000000000) + (month * 100000000000) +
-    // (day * 1000000000) + (hrs * 10000000) + (min * 100000) + (sec * 1000) + milsec);
     const { currentUser } = firebase.auth();
     try {
       checkFoodId();
       if (!pickerResult.cancelled) {
         setIsLoading(true);
         let uploadUrl = await uploadImageAsync(pickerResult.uri);
-        //   if (data.isSubmitImage === true) {
-        // const newItem = data.finalResults;
-        // const imageUrl = update(data.finalResults[data.activeSlide], { foodInfo: { image: { $set: uploadUrl } } });
-        // newItem[data.activeSlide] = imageUrl;
-        // setData({
-        //   ...data,
-        //     takenPicture: uploadUrl,
-        //     finalResults: newItem,
-        //     userSubmitImage: false
-        // })
-        // searchState = Object.assign({ ...searchState, takenPicture: uploadUrl });
-        //   } else {
-
-        // console.log('uploadUrl: ', uploadUrl)
         setTakenPicture(uploadUrl);
-        // setTimeout(() => {
-        //     setData({
-        //       ...data,
-        //         takenPicture: uploadUrl
-        //     })
-        // }, 1000);
-        // .then(() =>{
-        //     console.log('takenPicture: ',data.takenPicture)
-        // })
-        //   }
       } else {
         setIsLoading(false);
       }
@@ -1282,48 +1122,9 @@ const PostPictureScreen = (props) => {
       alert("Upload failed, sorry :(");
     } finally {
       setIsLoading(false);
-      // setData({
-      //   ...data,
-      //   uploading: false
-      // })
     }
   };
-  // const cancelUpdate = () => {
-  //   // Delete the file
-  //   if (searchState.takenPicture !== '') {
-  //     var the_string = searchState.takenPicture;
-  //     var imageFirstPart = the_string.split('preApprovalImage%2F', 2);
-  //     var imageSecPart =  imageFirstPart[1].split('?', 1);
-  //     var finalImageName = imageSecPart[0];
-  //     var storage = firebase.storage();
-  //     var storageRef = storage.ref();
-  //     let userImage = storageRef.child(`preApprovalImage/${finalImageName}`);
-  //     userImage.delete();
 
-  //     const newItem = data.finalResults;
-  //     const imageUrl = update(data.finalResults[data.activeSlide], { foodInfo: { image: { $set: data.oldImage } } });
-  //     newItem[data.activeSlide] = imageUrl;
-  //     setData({
-  //       ...data,
-  //         takenPicture: '',
-  //         finalResults: newItem,
-  //         isSubmitImage: false
-  //     })
-  //     searchState = Object.assign({ ...searchState, takenPicture: '' });
-
-  //   } else {
-  //     const newItem = data.finalResults;
-  //     const imageUrl = update(data.finalResults[data.activeSlide], { foodInfo: { image: { $set: data.oldImage } } });
-  //     newItem[data.activeSlide] = imageUrl;
-  //     setData({
-  //       ...data,
-  //         takenPicture: '',
-  //         finalResults: newItem,
-  //         isSubmitImage: false
-  //     })
-  //     searchState = Object.assign({ ...searchState, takenPicture: '' });
-  //   }
-  // }
   async function uploadImageAsync(uri) {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -1344,7 +1145,6 @@ const PostPictureScreen = (props) => {
     blob.close();
 
     return await snapshot.ref.getDownloadURL();
-    // return await snapshot.downloadURL;
   }
   function handleSomeKindOfEvent() {
     explosion && explosion.start();
@@ -1366,7 +1166,6 @@ const PostPictureScreen = (props) => {
               indexName="worests"
               refresh
               stalledSearchDelay={0}
-              // searchState={searchState}
               onSearchStateChange={(results) => onSearchStateChange(results)}>
               <Configure
                 filters={`restaurantUid:${restaurantUid}`}
@@ -1374,9 +1173,6 @@ const PostPictureScreen = (props) => {
                 attributesToRetrieve={attrToRetr}
                 hitsPerPage={25}
                 typoTolerance={"strict"}
-                // aroundLatLngViaIP
-                // aroundLatLng={this.state.arndLatLng}
-                // aroundRadius={this.state.aroundRadius}
               />
               <View style={{ marginTop: -25, marginBottom: 10 }}>
                 <Image
@@ -1385,40 +1181,6 @@ const PostPictureScreen = (props) => {
                   fadeDuration={100}
                 />
               </View>
-              {/* <View style={styles.action}>
-                  <Icon 
-                      name="fast-food"
-                      color={colors.text}
-                      size={25}
-                  />
-                  <TextInput
-                      placeholder="Item Name"
-                      keyboardType="default"
-                      autoCompleteType="name"
-                      autoFocus={false}
-                      value={data.email}
-                      textContentType={"name"} 
-                      onEndEditing={() =>{
-                          checkFoodId();
-                      }}
-                      placeholderTextColor="#666666"
-                      // style={[styles.textInput, {
-                      //     color: colors.text
-                      // }]}
-                      autoCapitalize="none"
-                      style={{ marginVertical: 10, fontSize: 17, marginLeft: 15, width: width * 0.70, marginTop: 0 }}
-                      onChangeText={(val) => {
-                          setData({
-                              ...data,
-                                  food_name: val
-                          });
-                      }}
-                      // onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
-                  />
-              </View>  */}
-              {/* <View>
-                  <Title style={{ width: width * 0.80, color: 'black', fontFamily: 'MontserratBold', fontSize: 16, marginTop: 0 }}>{props?.route?.params?.restaurantName}</Title>
-              </View> */}
               <TouchableOpacity
                 onPress={() => {
                   setData({ ...data, isSelectRest: true });
@@ -1438,13 +1200,7 @@ const PostPictureScreen = (props) => {
                   multiline={true}
                   value={restaurantName}
                   textContentType={"name"}
-                  // onEndEditing={() =>{
-                  //     checkFoodId();
-                  // }}
                   placeholderTextColor="#666666"
-                  // style={[styles.textInput, {
-                  //     color: colors.text
-                  // }]}
                   autoCapitalize="none"
                   style={{
                     fontFamily: "MontserratBold",
@@ -1455,13 +1211,6 @@ const PostPictureScreen = (props) => {
                     color: "black",
                     marginLeft: 5,
                   }}
-                  // onChangeText={(val) => {
-                  //     setData({
-                  //         ...data,
-                  //             food_name: val
-                  //     });
-                  // }}
-                  // onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
                 />
               </TouchableOpacity>
               <View
@@ -1524,13 +1273,7 @@ const PostPictureScreen = (props) => {
                   value={food_name}
                   multiline={true}
                   textContentType={"name"}
-                  // onEndEditing={() =>{
-                  //     checkFoodId();
-                  // }}
                   placeholderTextColor="#666666"
-                  // style={[styles.textInput, {
-                  //     color: colors.text
-                  // }]}
                   autoCapitalize="none"
                   style={{
                     fontFamily: "MontserratBold",
@@ -1542,13 +1285,6 @@ const PostPictureScreen = (props) => {
                     color: "black",
                     marginLeft: 5,
                   }}
-                  // onChangeText={(val) => {
-                  //     setData({
-                  //         ...data,
-                  //             food_name: val
-                  //     });
-                  // }}
-                  // onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
                 />
               </View>
               <View
@@ -1564,9 +1300,6 @@ const PostPictureScreen = (props) => {
               <View style={{ height: 80, marginBottom: 5 }}>
                 <Hits navigation={props.navigation} />
               </View>
-              {/* <View>
-                  <Title style={{ width: width * 0.80, color: 'black', fontFamily: 'MontserratBold', fontSize: 16, marginTop: 10, textAlign: 'center' }}>{data.food_name}</Title>
-              </View> */}
             </InstantSearch>
           </View>
           {takenPicture === "" ? (
@@ -1669,9 +1402,6 @@ const PostPictureScreen = (props) => {
               </LinearGradient>
             </View>
           </TouchableOpacity>
-          {/* <View style={{ flex: 1, marginTop: -25 }}>
-              <FindRestaurantScreen />
-          </View> */}
           <TouchableOpacity
             onPress={() => {
               whichPostFunc();
@@ -1709,12 +1439,6 @@ const PostPictureScreen = (props) => {
               </LinearGradient>
             </View>
           </TouchableOpacity>
-          {/* <View style={{ marginTop: 5, justifyContent: 'center', alignItems: 'center', marginBottom: 15 }}>
-              <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { 
-                  }} >
-              <Title style={{ color: 'black', fontSize: 16, fontFamily: 'Montserrat' }}>Cancel</Title>
-              </TouchableOpacity>
-          </View> */}
         </View>
         <Modal
           isVisible={isLoading}
@@ -1723,27 +1447,9 @@ const PostPictureScreen = (props) => {
           propagateSwipe
           animationIn={"fadeIn"}
           animationOut={"fadeOut"}
-          // onModalHide={() => { setData({ ...data, isSelectRest: false }); }}
-          // onModalShow={() => { setData({ ...data, isSelectRest: true }); }}
-          // onBackdropPress={() => { setData({ ...data, isSelectRest: false }); }}
           backdropColor="white"
           useNativeDriver={true}
-          backdropOpacity={0}
-          // hideModalContentWhileAnimating
-          // onRequestClose={() => { setData({ ...data, isSelectRest: false }); }}
-          // style={{
-          //     borderTopLeftRadius: 15,
-          //     borderTopRightRadius: 15,
-          //     borderBottomLeftRadius: 15,
-          //     borderBottomRightRadius: 15,
-          //     overflow: 'hidden',
-          //     backgroundColor: 'transparent',
-          //     marginLeft: 5,
-          //     marginRight: 5,
-          //     marginBottom: 5,
-          //     marginTop: 50
-          // }}
-        >
+          backdropOpacity={0}>
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <ActivityIndicator
@@ -1835,7 +1541,6 @@ const PostPictureScreen = (props) => {
             setIsFoodTypeChange(true);
           }}
           onBackdropPress={() => {
-            // setData({ ...data, isSortByChange: , sortBy: data.oldSortBy });
             setIsFoodTypeChange(false);
           }}
           onSwipeComplete={() => {
@@ -1851,14 +1556,10 @@ const PostPictureScreen = (props) => {
           style={{
             borderTopLeftRadius: 35,
             borderTopRightRadius: 35,
-            // borderBottomLeftRadius: 35,
-            // borderBottomRightRadius: 35,
             overflow: "hidden",
             marginLeft: 0,
             marginTop: 0,
             marginBottom: -50,
-            // marginRight: -10,
-            // padding: -5,
             width,
             backgroundColor: "transparent",
           }}>
@@ -1971,13 +1672,11 @@ const PostPictureScreen = (props) => {
                 onPress={() => {
                   setIsFoodTypeChange(false);
                 }}>
-                {/* <View style={{ marginTop: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}> */}
                 <LinearGradient
                   colors={["#fb8389", "#f70814", "#C90611"]}
                   style={styles.linearGradient3}>
                   <Text style={styles.buttonText5}>Done</Text>
                 </LinearGradient>
-                {/* </View> */}
               </TouchableHighlight>
             </View>
           </View>
@@ -1993,7 +1692,6 @@ const PostPictureScreen = (props) => {
           onModalShow={() => {
             setData({ ...data, isLogin: true });
           }}
-          // onBackdropPress={() => { setData({ ...data, isLogin: false }); }}
           backdropColor="black"
           useNativeDriver={true}
           backdropOpacity={0.3}
@@ -2159,16 +1857,9 @@ const PostPictureScreen = (props) => {
             </View>
             <TouchableOpacity
               onPress={() => {
-                // props.navigation.navigate({name:'SignUpScreen', params:{ routeCameFrom: 'MainTab', merge: true }}); setData({ ...data, isLogin: false });
                 setData({ ...data, isLogin: false });
                 props.navigation.navigate("LogIn", {
                   screen: "SignUpScreen",
-                  // params: {
-                  //   screen: 'SignUpScreen',
-                  // params: {
-                  //   screen: 'Media',
-                  // },
-                  // },
                 });
               }}>
               <View
@@ -2187,7 +1878,6 @@ const PostPictureScreen = (props) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                // props.navigation.navigate({name:'SignInScreen', params:{ routeCameFrom: 'MainTab', merge: true }}); setData({ ...data, isLogin: false });
                 setData({ ...data, isLogin: false });
                 props.navigation.navigate("LogIn", {
                   screen: "SignInScreen",
@@ -2318,19 +2008,6 @@ const PostPictureScreen = (props) => {
                 </TouchableOpacity>
               </View>
             ) : null}
-            {/* {
-                    Platform.OS === 'ios' ? 
-                    <View style={styles.button} >
-                      <AppleAuthentication.AppleAuthenticationButton
-                          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-                          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
-                          cornerRadius={20}
-                          style={{ width: (width * 0.75), height: 50, marginTop: 5 }}
-                          onPress={() =>{ login('apple')}}
-                        /> 
-                    </View>
-                    : <View />
-                  } */}
             <View
               style={{
                 justifyContent: "center",
@@ -2434,15 +2111,9 @@ const Hits = connectInfiniteHits(
         <View style={{ backgroundColor: "white", width, height: 50 }}>
           <TouchableOpacity
             onPress={() => {
-              // searchState = Object.assign({ restaurantUid: item.restaurantUid, searchingWord: item.restName, loadingStateVisible: true, nameRest: ' ' });
-              // navigation.navigate('Restaurant', { restaurantUid: item.restaurantUid, restaurantName: item.restName });
               navigation?.navigate("PostPictureScreen", {
                 food_name: newSearchState.food_name,
               });
-              //   refine(item.foodInfo.food_name)
-              // navigation.dispatch({
-              //   ...CommonActions.setParams({ restaurantName: item.restName })
-              // });
             }}>
             <View
               style={{
@@ -2502,18 +2173,11 @@ const Hits = connectInfiniteHits(
             return (
               <View
                 style={{ marginBottom: hits.length === index + 1 ? 200 : 0 }}>
-                {/* <View style={{ backgroundColor: 'black', height: index === 0 ? 1 : 0 }} /> */}
                 <TouchableHighlight
                   onPress={() => {
-                    // searchState = Object.assign({ restaurantUid: item.restaurantUid, searchingWord: item.restName, loadingStateVisible: true, nameRest: ' ' });
-                    // navigation.navigate('Restaurant', { restaurantUid: item.restaurantUid, restaurantName: item.restName });
                     navigation?.navigate("PostPictureScreen", {
                       food_name: item.foodInfo.food_name,
                     });
-                    //   refine(item.foodInfo.food_name)
-                    // navigation.dispatch({
-                    //   ...CommonActions.setParams({ restaurantName: item.restName })
-                    // });
                   }}>
                   <View style={{ backgroundColor: "white", width }}>
                     <View
@@ -2549,7 +2213,6 @@ const Hits = connectInfiniteHits(
                               marginRight: 30,
                               marginLeft: width * 0.04,
                             }}>
-                            {/* <Highlight attribute="foodInfo.food_name" hit={item} /> */}
                             {item.foodInfo.food_name}
                           </Text>
                         </View>
@@ -2582,7 +2245,6 @@ const Highlight = connectHighlight(({ highlight, attribute, hit }) => {
     hit,
     highlightProperty: "_highlightResult",
   });
-  //   console.log('parsedHit: ',parsedHit)
   const highlightedHit = parsedHit.map((part, idx) => {
     if (part.isHighlighted)
       return (
@@ -2596,26 +2258,15 @@ const Highlight = connectHighlight(({ highlight, attribute, hit }) => {
 });
 const SearchBox = connectSearchBox(
   ({ onFocus, onBlur, refine, currentRefinement }) => {
-    // if (Searched_Word !== '' && Searched_Word !== searchingWord) {
-    // refine(searchState.nameRest)
-    // }
     return (
       <View>
         <Searchbar
           placeholder={"Search an item ..."}
-          // onIconPress={() => { handleSearch(searchQuery); }}
           onChangeText={(text) => {
-            // refine(event.currentTarget.value)
             refine(text);
-            //   preLoad = false;
-            //   searchWord = text;
             newSearchState = Object.assign({ food_name: text });
           }}
-          // value={searchQuery}
           value={currentRefinement}
-          // onFocus={onFocus}
-          // onBlur={onBlur}
-          // defaultValue={data.searchQuery}
           maxLength={100}
           returnKeyType={"done"}
           keyboardType={"default"}
@@ -2725,7 +2376,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
-    // width: width * 0.40,
     marginLeft: 10,
     marginTop: 10,
     elevation: 4,

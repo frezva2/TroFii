@@ -1,24 +1,22 @@
 {
   "expo": {
+    "homepage": "https://github.com/frezva2/TroFii.git",
     "name": "TroFii",
     "description": "Looking for best food offers, food picker app, great food service & amazing dining experience around you? Scroll through to find best foods to order!",
     "slug": "TroFii",
     "owner": "frezva2",
-    "currentFullName": "@frezva2/trofii",
-    "originalFullName": "@frezva2/trofii",
+    "currentFullName": "",
+    "originalFullName": "",
     "privacy": "public",
     "scheme": "trofii",
     "userInterfaceStyle": "automatic",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "2.9.1",
     "orientation": "portrait",
-    "facebookAppId": "307295626459407",
+    "facebookAppId": "",
     "facebookAutoInitEnabled": true,
     "facebookDisplayName": "TroFii",
-    "facebookScheme": "fb307295626459407",
+    "facebookScheme": "",
     "assetBundlePatterns": [
       "./assets/Trofii-Splash.gif",
       "./assets/splash_2.png",
@@ -36,13 +34,22 @@
       "./assets/fonts/Poppins-Medium.ttf"
     ],
     "icon": "./assets/Icon_App_IOS2.png",
+    "scripts": {
+      "start": "expo start",
+      "predeploy": "npm run build",
+      "deploy": "gh-pages -d build",
+      "android": "expo run:android",
+      "ios": "expo run:ios",
+      "web": "expo start --web",
+      "build": "expo build:web"
+    },
     "splash": {
       "image": "./assets/splash_2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "Worests",
+      "bundleIdentifier": "TroFii",
       "icon": "./assets/Icon_App_IOS2.png",
       "requireFullScreen": true,
       "usesAppleSignIn": true,
@@ -54,7 +61,7 @@
         "NSCameraUsageDescription": "The photo you upload using your camera will be set as your profile picture."
       },
       "config": {
-        "googleMapsApiKey": "AIzaSyAqzRHlbJ7tIm7JzfCoLPajZxog_dBPMMI"
+        "googleMapsApiKey": ""
       },
       "googleServicesFile": "./GoogleService-Info.plist"
     },
@@ -75,28 +82,28 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAqzRHlbJ7tIm7JzfCoLPajZxog_dBPMMI"
+          "apiKey": ""
         }
       }
     },
     "web": {
       "config": {
         "firebase": {
-          "appId": "1:513107977432:ios:fd7ca067c9b8df7c",
-          "apiKey": "AIzaSyDAWNLR1joAOuN4WStnpJvr6446Qg0RhWg",
-          "clientId": "513107977432-01pktott0s803ktn40ll0fib72jtuod0.apps.googleusercontent.com",
-          "authDomain": "worests.firebaseapp.com",
-          "databaseURL": "https://worests.firebaseio.com",
-          "projectId": "worests",
-          "storageBucket": "worests.appspot.com",
-          "messagingSenderId": "513107977432",
-          "measurementId": "G-CJ1QHSX90M"
+          "appId": "",
+          "apiKey": "",
+          "clientId": "",
+          "authDomain": "",
+          "databaseURL": "",
+          "projectId": "",
+          "storageBucket": "",
+          "messagingSenderId": "",
+          "measurementId": ""
         }
       }
     },
     "extra": {
       "eas": {
-        "projectId": "9558c62c-711e-497f-a5ee-0fdd89da6510"
+        "projectId": ""
       }
     },
     "plugins": [
@@ -120,7 +127,7 @@
       "policy": "sdkVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/9558c62c-711e-497f-a5ee-0fdd89da6510"
+      "url": ""
     }
   }
 }

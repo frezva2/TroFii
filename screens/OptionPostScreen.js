@@ -8,56 +8,23 @@ import {
   TouchableOpacity,
   Image,
   Linking,
-  FlatList,
-  ActivityIndicator,
-  TouchableHighlight,
-  Keyboard,
-  Input,
   Alert,
-  TextInput,
   Share,
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import {
-  Avatar,
-  Button,
-  Card,
-  Title,
-  Paragraph,
-  Searchbar,
-  DefaultTheme,
-  List,
-  RadioButton,
-  useTheme,
-} from "react-native-paper";
+import { Title, Paragraph, DefaultTheme, useTheme } from "react-native-paper";
 import * as actions from "../actions";
 import { connect } from "react-redux";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Camera } from "expo-camera";
-import update from "immutability-helper";
-import Icon from "react-native-vector-icons/Ionicons";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
-import * as Permissions from "expo-permissions";
 import axios from "axios";
 import uuid from "uuid-v4";
 import Modal from "react-native-modal";
 import algoliasearch from "algoliasearch";
 import Feather from "react-native-vector-icons/Feather";
-import FindRestaurantScreen from "./FindRestaurantScreen";
 import Geocoder from "react-native-geocoding";
-import ConfettiCannon from "react-native-confetti-cannon";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  InstantSearch,
-  Configure,
-  connectInfiniteHits,
-  connectSearchBox,
-  connectHighlight,
-  // connectRefinementList,
-} from "react-instantsearch-native";
 import * as Sharing from "expo-sharing";
 import { captureRef, captureScreen } from "react-native-view-shot";
 
@@ -115,13 +82,13 @@ const attrToRetr = [
   "tempChecker.hour",
 ];
 
-import * as Google from 'expo-auth-session/providers/google';
+import * as Google from "expo-auth-session/providers/google";
 import * as Facebook from "expo-auth-session/providers/facebook";
 import { ResponseType } from "expo-auth-session";
 
 import * as WebBrowser from "expo-web-browser";
 
-const client = algoliasearch("K9M4MC44R0", "dfc4ea1c057d492e96b0967f050519c4", {
+const client = algoliasearch("", "", {
   timeouts: {
     connect: 1,
     read: 2, // The value of the former `timeout` parameter
@@ -223,29 +190,31 @@ const OptionPostScreen = (props) => {
       {
         clientId: "307295626459407",
         redirectUri: `fb307295626459407://authorize`,
-        expoClientId: '307295626459407',
+        expoClientId: "307295626459407",
         responseType: ResponseType.Token,
         usePKCE: true,
       },
       {
-        projectNameForProxy: "@frezva2/trofii",  
+        projectNameForProxy: "@frezva2/trofii",
         shouldAutoExchangeCode: true,
         useProxy: false,
       }
     );
-  const [requestGoogleAuth, responseGoogleAuth, promptAsyncGoogleAuth] = Google.useIdTokenAuthRequest({
-    androidClientId: "513107977432-kvg2n05qnefo7bm0n8a6oh8bdbeigsu4.apps.googleusercontent.com",
-    iosClientId: "513107977432-2024knee33edbe35ksg9j626sitnm3rs.apps.googleusercontent.com",
-    expoClientId: "513107977432-dont3igkq2o8lvhm2t8tcgjntig551bf.apps.googleusercontent.com"
-    },
-        {
-          projectNameForProxy: "@frezva2/trofii",  
-          shouldAutoExchangeCode: true,
-          useProxy: true,
-          selectAccount: true,
-    }
+  const [requestGoogleAuth, responseGoogleAuth, promptAsyncGoogleAuth] =
+    Google.useIdTokenAuthRequest(
+      {
+        androidClientId: "",
+        iosClientId: "",
+        expoClientId: "",
+      },
+      {
+        projectNameForProxy: "@frezva2/trofii",
+        shouldAutoExchangeCode: true,
+        useProxy: true,
+        selectAccount: true,
+      }
     );
-    
+
   const isEquivalent = (a, b) => {
     // Create arrays of property names
     var aProps = Object.getOwnPropertyNames(a);
@@ -291,47 +260,9 @@ const OptionPostScreen = (props) => {
     blob.close();
 
     return await snapshot.ref.getDownloadURL();
-    // return await snapshot.downloadURL;
   }
-  // const shareNow = async () => {
-  //   const userToken = await AsyncStorage.getItem('userToken');
-  //   if (userToken !== null) {
-  //     Sharing.isAvailableAsync().then(async (isAvailableAsync) => {
-  //         if(isAvailableAsync) {
-  //             // await captureRef(_flatListItem, {
-  //             //     result: 'tmpfile',
-  //             //     quality: 0.25,
-  //             //     format: 'jpg',
-  //               // })
-  //               captureScreen({
-  //                 result: 'tmpfile',
-  //                 quality: 0.25,
-  //                 format: 'jpg',
-  //               })
-  //             .then(async (uri) => {
-  //                 let uploadUrl = await uploadImageShareAsync(uri);
-  //                 Alert.alert(
-  //                   'Share',
-  //                   'Do you want to share this item? ',
-  //                   [
-  //                     { text: 'No', onPress: () => { }, style: 'cancel' },
-  //                     { text: 'Yes', onPress: async () => {
-  //                       const result = await Share.share({
-  //                           url: uri,
-  //                           message: `I recommend you ${food_name} from ${restaurantName}. Find more about this item with TroFii App: \nhttps://www.TroFii.Net \n\n${restWebsite} \n\n${uploadUrl}`
-  //                       });
-  //                       motionEvent();
-  //                   }}]);
-  //             });
-  //         }
-  //     })
-  //   } else {
-  //     setData({ ...data, isLogin: true });
-  //   }
-  // }
 
   const onSearchStateChange = (results) => {
-    // console.log(results)
     if (!isEquivalent(data.stateNavigation, results)) {
       if (tempFoodName !== results.query) {
         setFoodName(results.query);
@@ -340,8 +271,6 @@ const OptionPostScreen = (props) => {
           setData({
             ...data,
             stateNavigation: results,
-            // tempFoodName: results.query,
-            // food_name: results.query,
             isSelectRest: false,
           });
         }, 10);
@@ -351,19 +280,15 @@ const OptionPostScreen = (props) => {
           setData({
             ...data,
             stateNavigation: results,
-            // tempFoodName: results.query,
-            // food_name: props?.route?.params?.food_name,
             isSelectRest: false,
           });
         }, 10);
       }
-      //   setData({ ...data, food_name: searchState.foodInfo.food_name });
-      //   setData({ ...data, noResults: searchState.noResults, initialState: true });
     }
   };
   useEffect(() => {
     Geocoder.init("AIzaSyC2sLkZAFtMIsOzFqGKDgmxKbSajNfz-7A");
-    
+
     if (responseGoogleAuth !== null) {
       props.googleLogin(responseGoogleAuth);
     }
@@ -387,64 +312,9 @@ const OptionPostScreen = (props) => {
           }
         });
     }
-    // if (props?.route?.params?.food_name) {
-    //   Keyboard.dismiss();
-    //   setFoodName(props?.route?.params?.food_name);
-    //   setData({
-    //     ...data,
-    //     // food_name: props?.route?.params?.food_name,
-    //     isSelectRest: false,
-    //   });
-    // }
-    // if (
-    //   props?.route?.params?.place_id !== "" &&
-    //   props?.route?.params?.place_id !== undefined
-    // ) {
-    //   setTimeout(async () => {
-    //     try {
-    //       setIsLoading(true);
-    //       await getNewRestInfo(
-    //         props?.route?.params?.place_id,
-    //         props?.route?.params?.restaurantName
-    //       );
-    //       checkFoodId();
-    //       controller = null;
-    //     } catch (e) {
-    //       // Handle fetch error
-    //     }
-    //   }, 10);
-    // } else {
-    //   if (
-    //     props?.route?.params?.restaurantName !== "" &&
-    //     props?.route?.params?.restaurantName !== undefined
-    //   ) {
-    //     setIsLoading(true);
-    //   }
-    //   Keyboard.dismiss();
-    //   setTimeout(() => {
-    //     setRestaurantName(props?.route?.params?.restaurantName);
-    //     setRestaurantUid(props?.route?.params?.restaurantUid);
-    //     setRestAddress(props?.route?.params?.restAddress);
-    //     setPlaceId("");
-    //     setData({
-    //       ...data,
-    //       // restaurantName: props?.route?.params?.restaurantName,
-    //       // restaurantUid: props?.route?.params?.restaurantUid,
-    //       // restAddress: props?.route?.params?.restAddress,
-    //       // food_name: props?.route?.params?.food_name,
-    //       // place_id: '',
-    //       isSelectRest: false,
-    //     });
-    //     setIsLoading(false);
-    //   }, 100);
-    //   if (restaurantUid !== "") {
-    //     checkFoodId();
-    //   }
-    // }
-    return () => {
-      // console.log('unmounting...');
-    };
-  }, [responseGoogleAuth,responseFacebookAuth]);
+
+    return () => {};
+  }, [responseGoogleAuth, responseFacebookAuth]);
   const useCameraHandler = async () => {
     const { currentUser } = firebase.auth();
     if (currentUser === null || currentUser === undefined) {
@@ -495,21 +365,14 @@ const OptionPostScreen = (props) => {
   const checkFoodId = () => {
     if (restAddress !== undefined && restAddress !== "") {
       Geocoder.from(restAddress).then((json) => {
-        // setTimeout(() => {
         setRestLocation(json.results[0].geometry.location);
         setData({
           ...data,
-          //   restLocation: json.results[0].geometry.location,
-          //   food_name: props?.route?.params?.food_name,
           isSelectRest: false,
         });
-        //   }, 10);
       });
     }
-    // let query = '';
-    // console.log('checkFoodId 2: ', data );
     if (restaurantName !== "" && food_name !== "" && food_name !== undefined) {
-      // query = `${props?.route?.params?.restaurantName} ${data.food_name}`;
       const index = client.initIndex("worests");
       index
         .search(`${restaurantName} ${food_name}`, {
@@ -522,30 +385,22 @@ const OptionPostScreen = (props) => {
         .then((responses) => {
           const str = JSON.stringify(responses.hits);
           let object = JSON.parse(str);
-          //   console.log('checkFoodId 1: ',data.objectID);
           if (
             object[0] !== undefined &&
             object[0] !== null &&
             object.length !== 0
           ) {
-            // setTimeout(() => {
             setFoodObjectId(object[0]?.objectID);
             setData({
               ...data,
               isSelectRest: false,
             });
-            // }, 10);
           } else {
-            // console.log('null 1');
-            // setTimeout(() => {
             setFoodObjectId("");
             setData({
               ...data,
-              // foodObjectId: '',
-              // food_name: props?.route?.params?.food_name,
               isSelectRest: false,
             });
-            // }, 10);
           }
         });
     } else {
@@ -562,27 +417,17 @@ const OptionPostScreen = (props) => {
           const str = JSON.stringify(responses.hits);
           let object = JSON.parse(str);
           if (object !== undefined && object !== null && object.length !== 0) {
-            //   console.log('checkFoodId 2: ',object[0]?.objectID);
-            //   setTimeout(() => {
             setFoodObjectId(object[0]?.objectID);
             setData({
               ...data,
-              //   foodObjectId: object[0]?.objectID,
-              // food_name: props?.route?.params?.food_name,
               isSelectRest: false,
             });
-            //   }, 10);
           } else {
-            //   console.log('null 2');
-            //   setTimeout(() => {
             setFoodObjectId("");
             setData({
               ...data,
-              //   foodObjectId: '',
-              // food_name: props?.route?.params?.food_name,
               isSelectRest: false,
             });
-            //   }, 10);
           }
         });
     }
@@ -601,15 +446,7 @@ const OptionPostScreen = (props) => {
       setBusinessStatus(newResponse?.data?.result?.business_status);
       setData({
         ...data,
-        // restAxiosData: newResponse,
-        // restaurantName: restaurantName,
-        // restAddress: newResponse?.data?.result?.formatted_address,
-        // restWebsite: newResponse?.data?.result?.website,
-        // phoneNum: newResponse?.data?.result?.formatted_phone_number,
-        // business_status: newResponse?.data?.result?.business_status,
-        // food_name: props?.route?.params?.food_name,
         isSelectRest: false,
-        // place_id,
       });
       setIsLoading(false);
     }, 10);
@@ -702,7 +539,6 @@ const OptionPostScreen = (props) => {
                 followingNum: 0,
                 followersList: { 0: "_" },
                 followingList: { 0: "_" },
-                // expoToken: this.state.expoToken,
                 RestNumFollowers: 0,
                 RestApptNum: 0,
                 RestDrinkNum: 0,
@@ -1053,7 +889,6 @@ const OptionPostScreen = (props) => {
     }
   };
   const postPhoto = () => {
-    //   console.log('postPhoto',data.foodObjectId);
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1;
     const day = new Date().getDate();
@@ -1077,11 +912,6 @@ const OptionPostScreen = (props) => {
     const restImageRef = firebase
       .database()
       .ref(`/restImage/${restaurantUid}/${foodObjectId}`);
-    // console.log(restaurantUid, foodObjectId)
-    //   restImageRef.once("value").then((snapshot) => {
-    //     if(snapshot.val() !== null) {
-    //       snapshot.forEach((data) => {
-    // if (data.val().uidUser !== undefined && data.val().uidUser.toString() !== currentUser.uid.toString()) {
     firebase.auth().onAuthStateChanged((user) => {
       if (user !== null) {
         const userRef = firebase.database().ref(`/users/${user.uid}`);
@@ -1137,23 +967,8 @@ const OptionPostScreen = (props) => {
                 food_name: food_name,
                 foodType: "Entrée",
               });
-              // shareNow();
-              // setData({
-              //   ...data,
-              //     isSubmitImage: false,
-              //     tempRestId: snapShot.key,
-              //     restaurantName: '',
-              //     food_name: '',
-              //     restaurantUid: '',
-              //     place_id: '',
-              // })
               Sharing.isAvailableAsync().then(async (isAvailableAsync) => {
                 if (isAvailableAsync) {
-                  // await captureRef(_flatListItem, {
-                  //     result: 'tmpfile',
-                  //     quality: 0.25,
-                  //     format: 'jpg',
-                  // })
                   captureScreen({
                     result: "tmpfile",
                     quality: 0.25,
@@ -1175,9 +990,6 @@ const OptionPostScreen = (props) => {
                               user.uid,
                               snapShot.key
                             );
-                            // setRestaurantName('');
-                            // setRestaurantUid('');
-                            // setRestAddress('');
                             setPlaceId("");
                             setFoodName("");
                             setTempFoodName("");
@@ -1218,14 +1030,6 @@ const OptionPostScreen = (props) => {
         });
       }
     });
-    // } else {
-    //     Alert.alert('Too Many Submissions Attempted', 'You allow to submit an image only one time for each menu item.', [{ text: 'OK',
-    //         onPress: () => {},
-    //         style: 'cancel' }], { cancelable: false });
-    //   }
-    //   })
-    // }
-    //   });
   };
   const whichPostFunc = () => {
     const { currentUser } = firebase.auth();
@@ -1271,41 +1075,14 @@ const OptionPostScreen = (props) => {
     const hrs = new Date().getHours();
     const min = new Date().getMinutes();
     const time = `${month}/${day}/${year} ${hrs}:${min}`;
-    // const sec = new Date().getSeconds();
     const milsec = new Date().getMilliseconds();
-    // const dateID = ((year * 10000000000000) + (month * 100000000000) +
-    // (day * 1000000000) + (hrs * 10000000) + (min * 100000) + (sec * 1000) + milsec);
     const { currentUser } = firebase.auth();
     try {
       checkFoodId();
       if (!pickerResult.cancelled) {
         setIsLoading(true);
         let uploadUrl = await uploadImageAsync(pickerResult.uri);
-        //   if (data.isSubmitImage === true) {
-        // const newItem = data.finalResults;
-        // const imageUrl = update(data.finalResults[data.activeSlide], { foodInfo: { image: { $set: uploadUrl } } });
-        // newItem[data.activeSlide] = imageUrl;
-        // setData({
-        //   ...data,
-        //     takenPicture: uploadUrl,
-        //     finalResults: newItem,
-        //     userSubmitImage: false
-        // })
-        // searchState = Object.assign({ ...searchState, takenPicture: uploadUrl });
-        //   } else {
-
-        // console.log('uploadUrl: ', uploadUrl)
         setTakenPicture(uploadUrl);
-        // setTimeout(() => {
-        //     setData({
-        //       ...data,
-        //         takenPicture: uploadUrl
-        //     })
-        // }, 1000);
-        // .then(() =>{
-        //     console.log('takenPicture: ',data.takenPicture)
-        // })
-        //   }
       } else {
         setIsLoading(false);
       }
@@ -1313,55 +1090,14 @@ const OptionPostScreen = (props) => {
       alert("Upload failed, sorry :(");
     } finally {
       setIsLoading(false);
-      // setData({
-      //   ...data,
-      //   uploading: false
-      // })
     }
   };
-  // const cancelUpdate = () => {
-  //   // Delete the file
-  //   if (searchState.takenPicture !== '') {
-  //     var the_string = searchState.takenPicture;
-  //     var imageFirstPart = the_string.split('preApprovalImage%2F', 2);
-  //     var imageSecPart =  imageFirstPart[1].split('?', 1);
-  //     var finalImageName = imageSecPart[0];
-  //     var storage = firebase.storage();
-  //     var storageRef = storage.ref();
-  //     let userImage = storageRef.child(`preApprovalImage/${finalImageName}`);
-  //     userImage.delete();
 
-  //     const newItem = data.finalResults;
-  //     const imageUrl = update(data.finalResults[data.activeSlide], { foodInfo: { image: { $set: data.oldImage } } });
-  //     newItem[data.activeSlide] = imageUrl;
-  //     setData({
-  //       ...data,
-  //         takenPicture: '',
-  //         finalResults: newItem,
-  //         isSubmitImage: false
-  //     })
-  //     searchState = Object.assign({ ...searchState, takenPicture: '' });
-
-  //   } else {
-  //     const newItem = data.finalResults;
-  //     const imageUrl = update(data.finalResults[data.activeSlide], { foodInfo: { image: { $set: data.oldImage } } });
-  //     newItem[data.activeSlide] = imageUrl;
-  //     setData({
-  //       ...data,
-  //         takenPicture: '',
-  //         finalResults: newItem,
-  //         isSubmitImage: false
-  //     })
-  //     searchState = Object.assign({ ...searchState, takenPicture: '' });
-  //   }
-  // }
   function handleSomeKindOfEvent() {
     explosion && explosion.start();
   }
 
   const canPostPictureScreen = async () => {
-    // const userToken = await AsyncStorage.getItem("userToken");
-    // if (userToken !== null) {
     const { currentUser } = firebase.auth();
     if (currentUser !== null) {
       props.navigation.navigate("PostPictureScreen");
@@ -1370,8 +1106,6 @@ const OptionPostScreen = (props) => {
     }
   };
   const canPostHomemadePictureScreen = async () => {
-    // const userToken = await AsyncStorage.getItem("userToken");
-    // if (userToken !== null) {
     const { currentUser } = firebase.auth();
     if (currentUser !== null) {
       props.navigation.navigate("PostHomemadePictureScreen");
@@ -1382,132 +1116,83 @@ const OptionPostScreen = (props) => {
   return (
     <View>
       <StatusBar barStyle={"light-content"} />
-        <Image
-          style={{ "resizeMode": "stretch", "backgroundColor": "#ffffff", width, height, zIndex: 1 }}
-          source={require('../assets/blur2.jpg')}
-          fadeDuration={0}
-        />
-        <View style={{ marginTop: -height*0.35, zIndex: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-          <View>
-            <TouchableOpacity
-              onPress={() => {
-                canPostHomemadePictureScreen();
-              }}
-            >
-              <Image
-                style={{
-                  width: width * 0.3,
-                  height: width * 0.3,
-                  elevation: 5,
-                  borderRadius: 10,
-                  marginTop: 0,
-                }}
-                source={require("../assets/images/homeItem.png")}
-                fadeDuration={0}
-              />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <TouchableOpacity
-              onPress={() => {
-                canPostPictureScreen();
-              }}
-            >
-              <Image
-                style={{
-                  width: width * 0.3,
-                  height: width * 0.3,
-                  elevation: 5,
-                  borderRadius: 10,
-                  marginTop: 0,
-                }}
-                source={require("../assets/images/restItem.png")}
-                fadeDuration={0}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      {/* <View
+      <Image
         style={{
+          resizeMode: "stretch",
+          backgroundColor: "#ffffff",
+          width,
           height,
-          flexDirection: "column",
-          alignItems: "center",
-          // justifyContent: 'space-around',
-          marginTop: 50,
+          zIndex: 1,
         }}
-      >
-        <View style={{ flex: 1, marginTop: 10, alignItems: "center" }}>
-          <TouchableOpacity
-            onPress={() => {
-              canPostPictureScreen();
-            }}
-          >
-            <Image
-              style={{
-                width: width * 0.6,
-                height: width * 0.6,
-                elevation: 5,
-                borderRadius: 10,
-                marginTop: 0,
-              }}
-              source={require("../assets/images/restaurantpost.png")}
-              fadeDuration={0}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={{ flex: 1, marginTop: -height*0.15, alignItems: "center" }}>
+        source={require("../assets/blur2.jpg")}
+        fadeDuration={0}
+      />
+      <View
+        style={{
+          marginTop: -height * 0.35,
+          zIndex: 3,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+        }}>
+        <View>
           <TouchableOpacity
             onPress={() => {
               canPostHomemadePictureScreen();
-            }}
-          >
+            }}>
             <Image
               style={{
-                width: width * 0.6,
-                height: width * 0.6,
+                width: width * 0.3,
+                height: width * 0.3,
                 elevation: 5,
                 borderRadius: 10,
                 marginTop: 0,
               }}
-              source={require("../assets/images/homemadepost.png")}
+              source={require("../assets/images/homeItem.png")}
               fadeDuration={0}
             />
           </TouchableOpacity>
         </View>
-      </View> */}
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              canPostPictureScreen();
+            }}>
+            <Image
+              style={{
+                width: width * 0.3,
+                height: width * 0.3,
+                elevation: 5,
+                borderRadius: 10,
+                marginTop: 0,
+              }}
+              source={require("../assets/images/restItem.png")}
+              fadeDuration={0}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
       <Modal
         isVisible={false}
         animationInTiming={10}
         animationOutTiming={10}
         propagateSwipe
-        // onModalHide={() => {
-        //   setIsLogin(false);
-        // }}
-        // onModalShow={() => {
-        //   setIsLogin(true);
-        // }}
-        onBackdropPress={() => { setData({ ...data, isLogin: false }); }}
+        onBackdropPress={() => {
+          setData({ ...data, isLogin: false });
+        }}
         backdropColor="black"
         useNativeDriver={true}
         backdropOpacity={0.7}
         hideModalContentWhileAnimating
-        // onRequestClose={() => {
-        //   setIsLogin(false);
-        // }}
         style={{
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           overflow: "hidden",
-          // margin: 0,
           marginTop: height * 0.45,
-          // padding: -25,
-          // width,
-          // height: height * 0.45,
           backgroundColor: "transparent",
-        }}
-      >
+        }}>
         <View />
       </Modal>
       <Modal
@@ -1521,7 +1206,6 @@ const OptionPostScreen = (props) => {
         onModalShow={() => {
           setIsLogin(true);
         }}
-        // onBackdropPress={() => { setData({ ...data, isLogin: false }); }}
         backdropColor="black"
         useNativeDriver={true}
         backdropOpacity={0.3}
@@ -1537,16 +1221,14 @@ const OptionPostScreen = (props) => {
           overflow: "hidden",
           padding: -5,
           backgroundColor: "transparent",
-        }}
-      >
+        }}>
         <ScrollView style={{ backgroundColor: "white" }}>
           <View>
             <TouchableOpacity
               onPress={() => {
                 setIsLogin(false);
               }}
-              style={{ marginVertical: 10, marginLeft: 15, marginTop: 15 }}
-            >
+              style={{ marginVertical: 10, marginLeft: 15, marginTop: 15 }}>
               <Feather name="x" color="gray" size={30} />
             </TouchableOpacity>
           </View>
@@ -1565,8 +1247,7 @@ const OptionPostScreen = (props) => {
                   fontFamily: "MontserratBold",
                   fontSize: 18,
                   marginTop: 10,
-                }}
-              >
+                }}>
                 Guest User Alert
               </Title>
             </View>
@@ -1576,8 +1257,7 @@ const OptionPostScreen = (props) => {
                 marginLeft: 0,
                 width: width * 0.9,
                 borderRadius: 35,
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginTop: 5,
@@ -1585,15 +1265,13 @@ const OptionPostScreen = (props) => {
                   justifyContent: "flex-start",
                   marginBottom: 5,
                   backgroundColor: "white",
-                }}
-              >
+                }}>
                 <View
                   style={{
                     width: width * 0.75,
                     marginTop: 0,
                     marginLeft: 15,
-                  }}
-                >
+                  }}>
                   <Paragraph style={styles.searchDescStyle}>
                     You are not signed into an account, which means you won’t be
                     able to use 100% of the apps functionalities.{" "}
@@ -1607,8 +1285,7 @@ const OptionPostScreen = (props) => {
                 marginLeft: 0,
                 width: width * 0.9,
                 borderRadius: 35,
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginTop: 5,
@@ -1616,15 +1293,13 @@ const OptionPostScreen = (props) => {
                   justifyContent: "flex-start",
                   marginBottom: 5,
                   backgroundColor: "white",
-                }}
-              >
+                }}>
                 <View
                   style={{
                     width: width * 0.75,
                     marginTop: 0,
                     marginLeft: 15,
-                  }}
-                >
+                  }}>
                   <Paragraph style={styles.searchDescStyle}>
                     As a Guest User you can:{" "}
                   </Paragraph>
@@ -1637,8 +1312,7 @@ const OptionPostScreen = (props) => {
                 marginLeft: 0,
                 width: width * 0.9,
                 borderRadius: 35,
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginTop: 5,
@@ -1647,8 +1321,7 @@ const OptionPostScreen = (props) => {
                   marginBottom: 5,
                   backgroundColor: "white",
                   flexDirection: "row",
-                }}
-              >
+                }}>
                 <View style={{ marginTop: 7, marginLeft: 30, marginRight: 2 }}>
                   <Image
                     style={{ width: 9, height: 9, marginTop: 0 }}
@@ -1669,8 +1342,7 @@ const OptionPostScreen = (props) => {
                 marginLeft: 0,
                 width: width * 0.9,
                 borderRadius: 35,
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginTop: 5,
@@ -1679,8 +1351,7 @@ const OptionPostScreen = (props) => {
                   marginBottom: 5,
                   backgroundColor: "white",
                   flexDirection: "row",
-                }}
-              >
+                }}>
                 <View style={{ marginTop: 7, marginLeft: 30, marginRight: 2 }}>
                   <Image
                     style={{ width: 9, height: 9, marginTop: 0 }}
@@ -1698,126 +1369,107 @@ const OptionPostScreen = (props) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              // props.navigation.navigate({name:'SignUpScreen', params:{ routeCameFrom: 'MainTab', merge: true }}); setData({ ...data, isLogin: false });
               setIsLogin(false);
               props.navigation.navigate("LogIn", {
                 screen: "SignUpScreen",
-                // params: {
-                //   screen: 'SignUpScreen',
-                // params: {
-                //   screen: 'Media',
-                // },
-                // },
               });
-            }}
-          >
+            }}>
             <View
               style={{
                 marginTop: 10,
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: 5,
-              }}
-            >
+              }}>
               <LinearGradient
                 colors={["#fb8389", "#f70814", "#C90611"]}
-                style={styles.linearGradient}
-              >
+                style={styles.linearGradient}>
                 <Text style={styles.buttonText}>Sign Up</Text>
               </LinearGradient>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              // props.navigation.navigate({name:'SignInScreen', params:{ routeCameFrom: 'MainTab', merge: true }}); setData({ ...data, isLogin: false });
               setIsLogin(false);
               props.navigation.navigate("LogIn", {
                 screen: "SignInScreen",
               });
             }}
-            style={{ marginBottom: 10 }}
-          >
+            style={{ marginBottom: 10 }}>
             <View
               style={{
                 marginTop: 10,
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: 5,
-              }}
-            >
+              }}>
               <LinearGradient
                 colors={["#fff", "#fff", "#fff"]}
-                style={styles.linearGradient2}
-              >
+                style={styles.linearGradient2}>
                 <Text style={styles.buttonText2}>Sign In</Text>
               </LinearGradient>
             </View>
           </TouchableOpacity>
-            { 
-              Platform.OS === 'ios' ?
-              <View style={styles.button}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsLogin(false);
-                    login("facebook");
-                  }}
-                >
-                  <View
-                    style={{
-                      marginTop: 0,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginBottom: 5,
-                    }}
-                  >
-                    <LinearGradient
-                      colors={
-                        Platform.OS === "ios"
-                          ? ["#fff", "#fff", "#fff"]
-                          : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
-                      }
-                      style={styles.linearGradientSocial}
-                    >
-                      <Image
-                        style={{
-                          marginLeft: 0,
-                          marginTop: 0,
-                          width: 20,
-                          height: 20,
-                        }}
-                        source={require("../assets/icons/fb.png")}
-                      />
-                      <Text style={styles.buttonTextBlack}>
-                        Sign in with Facebook
-                      </Text>
-                    </LinearGradient>
-                  </View>
-                </TouchableOpacity>
-              </View> : <View />
-          }
+          {Platform.OS === "ios" ? (
+            <View style={styles.button}>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsLogin(false);
+                  login("facebook");
+                }}>
+                <View
+                  style={{
+                    marginTop: 0,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 5,
+                  }}>
+                  <LinearGradient
+                    colors={
+                      Platform.OS === "ios"
+                        ? ["#fff", "#fff", "#fff"]
+                        : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
+                    }
+                    style={styles.linearGradientSocial}>
+                    <Image
+                      style={{
+                        marginLeft: 0,
+                        marginTop: 0,
+                        width: 20,
+                        height: 20,
+                      }}
+                      source={require("../assets/icons/fb.png")}
+                    />
+                    <Text style={styles.buttonTextBlack}>
+                      Sign in with Facebook
+                    </Text>
+                  </LinearGradient>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View />
+          )}
           <View style={styles.button}>
             <TouchableOpacity
               onPress={() => {
                 setIsLogin(false);
                 login("google");
-              }}
-            >
+              }}>
               <View
                 style={{
                   marginTop: 0,
                   justifyContent: "center",
                   alignItems: "center",
                   marginBottom: 5,
-                }}
-              >
+                }}>
                 <LinearGradient
                   colors={
                     Platform.OS === "ios"
                       ? ["#fff", "#fff", "#fff"]
                       : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
                   }
-                  style={styles.linearGradientSocial}
-                >
+                  style={styles.linearGradientSocial}>
                   <Image
                     style={{
                       marginLeft: 0,
@@ -1840,24 +1492,21 @@ const OptionPostScreen = (props) => {
                 onPress={() => {
                   setIsLogin(false);
                   login("apple");
-                }}
-              >
+                }}>
                 <View
                   style={{
                     marginTop: 0,
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: 5,
-                  }}
-                >
+                  }}>
                   <LinearGradient
                     colors={
                       Platform.OS === "ios"
                         ? ["#fff", "#fff", "#fff"]
                         : ["#f2f2f2", "#f2f2f2", "#e6e6e6"]
                     }
-                    style={styles.linearGradientSocial}
-                  >
+                    style={styles.linearGradientSocial}>
                     <Image
                       style={{
                         marginLeft: 0,
@@ -1875,32 +1524,17 @@ const OptionPostScreen = (props) => {
               </TouchableOpacity>
             </View>
           ) : null}
-          {/* {
-                  Platform.OS === 'ios' ? 
-                  <View style={styles.button} >
-                    <AppleAuthentication.AppleAuthenticationButton
-                        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-                        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
-                        cornerRadius={20}
-                        style={{ width: (width * 0.75), height: 50, marginTop: 5 }}
-                        onPress={() =>{ login('apple')}}
-                      /> 
-                  </View>
-                  : <View />
-                } */}
           <View
             style={{
               justifyContent: "center",
               alignItems: "center",
               marginBottom: 10,
               marginTop: 10,
-            }}
-          >
+            }}>
             <TouchableOpacity
               onPress={() => {
                 setIsLogin(false);
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontSize: 12,
@@ -1908,8 +1542,7 @@ const OptionPostScreen = (props) => {
                   alignItems: "center",
                   color: "#EE5B64",
                   fontFamily: "MontserratSemiBold",
-                }}
-              >
+                }}>
                 CONTINUE AS A GUEST
               </Text>
             </TouchableOpacity>
@@ -1922,11 +1555,9 @@ const OptionPostScreen = (props) => {
                 justifyContent: "center",
                 marginBottom: 5,
                 backgroundColor: "white",
-              }}
-            >
+              }}>
               <View
-                style={{ width: width * 0.75, marginTop: 0, marginLeft: 0 }}
-              >
+                style={{ width: width * 0.75, marginTop: 0, marginLeft: 0 }}>
                 <Paragraph style={styles.searchDescStyle3}>
                   NOTE: Your email address will be used to create an account to
                   store and keep track of your Reward Points earned and redeemed
@@ -1942,11 +1573,9 @@ const OptionPostScreen = (props) => {
             <TouchableOpacity
               onPress={() => {
                 Linking.openURL(data.PrivacyPolicy);
-              }}
-            >
+              }}>
               <Text
-                style={[styles.color_textPrivateBold, { fontWeight: "bold" }]}
-              >
+                style={[styles.color_textPrivateBold, { fontWeight: "bold" }]}>
                 {" "}
                 Privacy policy
               </Text>
@@ -1955,11 +1584,9 @@ const OptionPostScreen = (props) => {
             <TouchableOpacity
               onPress={() => {
                 Linking.openURL(data.TermsConditions);
-              }}
-            >
+              }}>
               <Text
-                style={[styles.color_textPrivateBold, { fontWeight: "bold" }]}
-              >
+                style={[styles.color_textPrivateBold, { fontWeight: "bold" }]}>
                 {" "}
                 Terms And Conditions
               </Text>
@@ -1967,15 +1594,6 @@ const OptionPostScreen = (props) => {
           </View>
         </ScrollView>
       </Modal>
-      {/* <ConfettiCannon
-          count={200}
-          explosionSpeed={2000}
-          fallSpeed={1500}
-          fadeOut={true}
-          origin={{ x: width / 2, y: -200 }}
-          autoStart={false}
-          ref={(ref) => (explosion = ref)}
-        /> */}
     </View>
   );
 };
@@ -2148,8 +1766,6 @@ const styles = StyleSheet.create({
   },
   CurrentImage3: {
     flex: 1,
-    // width: 50,
-    // height: 50,
     width: width * 0.5,
     height: width * 0.5,
     borderRadius: 25,
@@ -2157,8 +1773,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   CurrentImage2: {
-    // width: 50,
-    // height: 50,
     width: catWidth,
     height: catHeight,
     borderRadius: 5,
@@ -2175,14 +1789,8 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratSemiBold",
     fontSize: 16,
     width: width * 0.7,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     lineHeight: 25,
     textAlign: "center",
-    // fontWeight: 'bold',
-    // textShadowRadius: 5,
-    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    // textShadowOffset: { width: -1, height: 1 }
   },
   titleStyle8: {
     fontFamily: "Montserrat",
@@ -2191,10 +1799,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: width * 0.6,
     marginTop: 0,
-    // fontWeight: 'bold',
-    // textShadowRadius: 5,
-    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    // textShadowOffset: { width: -1, height: 1 }
   },
   titleStyle6: {
     fontFamily: "Montserrat",
@@ -2203,10 +1807,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: width * 0.7,
     lineHeight: 20,
-    // fontWeight: 'bold',
-    // textShadowRadius: 5,
-    // textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    // textShadowOffset: { width: -1, height: 1 }
   },
   searchDescStyle: {
     textAlign: "left",
@@ -2282,7 +1882,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
-    // width: width * 0.40,
     marginLeft: 10,
     marginTop: 10,
     elevation: 4,
